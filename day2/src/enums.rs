@@ -54,7 +54,7 @@ impl Outcome {
             "X" => Some(Outcome::Lose),
             "Y" => Some(Outcome::Draw),
             "Z" => Some(Outcome::Win),
-            _ => None
+            _ => None,
         }
     }
 }

@@ -33,45 +33,41 @@ fn main() {
 fn p1(rounds: Vec<&str>) {
     let mut total_points: u64 = 0;
     for round in rounds.iter() {
-        total_points += calc_round_points(round);
+        let (opponent_hand, player_hand) = transform_round_p1(round);
+        total_points += calc_round_points(opponent_hand, player_hand);
     }
     println!("total points: {}", total_points);
 }
 
 fn p2(rounds: Vec<&str>) {
     for round in rounds.iter() {
-        let (p1, outcome) = transform_round_p2(round);
+        let (opponent_hand, desired_outcome) = transform_round_p2(round);
+        println!("{:?}, {:?}", opponent_hand, desired_outcome);
+        break;
     }
 }
 
-fn calc_round_points(round: &str) -> u64 {
-    let (p1, p2) = transform_round_p1(round);
-    let result = determine_result(p1, p2);
-    result.points() + p2.bonus_points()
+fn calc_round_points(hand1: enums::Hand, hand2: enums::Hand) -> u64 {
+    let result = determine_result(hand1, hand2);
+    result.points() + hand2.bonus_points()
 }
 
 fn transform_round_p1(round: &str) -> (enums::Hand, enums::Hand) {
     let hands: Vec<&str> = round.trim_end_matches("\n").split(" ").collect();
 
-    let p1 = hands[0];
-    let p2 = hands[1];
+    let opponent_hand = enums::Hand::transform(hands[1]).expect("malformed input");
+    let player_hand = enums::Hand::transform(hands[1]).expect("malformed input");
 
-    let hand1 = enums::Hand::transform(p1).expect("malformed input");
-    let hand2 = enums::Hand::transform(p2).expect("malformed input");
-
-    (hand1, hand2)
+    (opponent_hand, player_hand)
 }
 
-fn transform_round_p2(round: &str) -> (enums::Hand, enums::Hand) {
-    let hands: Vec<&str> = round.trim_end_matches("\n").split(" ").collect();
+fn transform_round_p2(round: &str) -> (enums::Hand, enums::Outcome) {
+    let round: Vec<&str> = round.trim_end_matches("\n").split(" ").collect();
 
-    let p1 = hands[0];
-    let p2 = hands[1];
+    let opponent_hand = enums::Hand::transform(round[0]).expect("malformed input");
+    let desired_outcome = enums::Outcome::transform(round[1]).expect("malformed input");
 
-    let hand1 = enums::Hand::transform(p1).expect("malformed input");
-    let hand2 = enums::Hand::transform(p2).expect("malformed input");
-
-    (hand1, hand2)
+    (opponent_hand, desired_outcome)
 }
 
 fn determine_result(hand1: enums::Hand, hand2: enums::Hand) -> enums::Result {
@@ -93,6 +89,7 @@ fn determine_result(hand1: enums::Hand, hand2: enums::Hand) -> enums::Result {
         },
     }
 }
+
 
 #[cfg(test)]
 mod tests {
