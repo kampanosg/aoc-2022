@@ -12,6 +12,13 @@ pub enum Result {
     Draw,
 }
 
+#[derive(Debug)]
+pub enum Outcome {
+    Win,
+    Lose,
+    Draw,
+}
+
 impl Hand {
     pub fn transform(v: &str) -> Option<Hand> {
         match v {
@@ -37,6 +44,17 @@ impl Result {
             Result::Win => 6,
             Result::Draw => 3,
             Result::Lose => 0,
+        }
+    }
+}
+
+impl Outcome {
+    pub fn transform(v: &str) -> Option<Outcome> {
+        match v {
+            "X" => Some(Outcome::Lose),
+            "Y" => Some(Outcome::Draw),
+            "Z" => Some(Outcome::Win),
+            _ => None
         }
     }
 }
