@@ -5,7 +5,8 @@ pub enum Hand {
     Scissors,
 }
 
-enum Result {
+#[derive(Debug)]
+pub enum Result {
     Win,
     Lose,
     Draw,
