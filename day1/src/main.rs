@@ -21,13 +21,7 @@ fn p1(elf_cals: Vec<&str>) {
 
     for elf in elf_cals {
         let elf = elf.trim_end_matches("\n");
-        let elf_cals = elf
-            .split("\n")
-            .map(|e| e.parse().unwrap())
-            .collect::<Vec<i64>>()
-            .iter()
-            .sum::<i64>();
-
+        let elf_cals = sum_str_vec(elf);
         if elf_cals > highest_cals {
             highest_cals = elf_cals
         }
@@ -38,20 +32,25 @@ fn p1(elf_cals: Vec<&str>) {
 fn p2(elf_cals: Vec<&str>) {
     let mut all_cals: Vec<i64> = vec![];
     for elf in elf_cals {
-        let elf = elf.trim_end_matches("\n");
-        let elf_cals = elf
-            .split("\n")
-            .map(|e| e.parse().unwrap())
-            .collect::<Vec<i64>>()
-            .iter()
-            .sum::<i64>();
+        let elf_cals = sum_str_vec(elf);
         all_cals.push(elf_cals);
     }
     all_cals.sort();
     all_cals.reverse();
+
     let (top_elves, _other_elves) = all_cals.split_at(3);
     let total_cals = top_elves.to_vec().iter().sum::<i64>();
     println!("top elves: {:?}", top_elves);
     println!("top cals (total): {}", total_cals);
 
+}
+
+fn sum_str_vec(elf: &str) -> i64 {
+    let elf = elf.trim_end_matches("\n");
+    return elf
+        .split("\n")
+        .map(|e| e.parse().unwrap())
+        .collect::<Vec<i64>>()
+        .iter()
+        .sum::<i64>();
 }
