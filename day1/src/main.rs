@@ -48,6 +48,10 @@ fn p2(elf_cals: Vec<&str>) {
 }
 
 fn sum_str_vec(elf: &str) -> i64 {
+    if elf.is_empty() {
+        return 0;
+    }
+
     let elf = elf.trim_end_matches("\n");
     return elf
         .split("\n")
@@ -55,4 +59,33 @@ fn sum_str_vec(elf: &str) -> i64 {
         .collect::<Vec<i64>>()
         .iter()
         .sum::<i64>();
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::sum_str_vec;
+
+    #[test]
+    fn test_sum_str_vec_given_empty_str_return_zero() {
+        let elf = "";
+        let res = sum_str_vec(elf);
+        assert_eq!(res, 0);
+    }
+
+    #[test]
+    fn test_sum_str_vec_given_single_element_then_return_correct_res() {
+        let elf1 = "69\n";
+        let elf2 = "69";
+        let res1 = sum_str_vec(elf1);
+        let res2 = sum_str_vec(elf2);
+        assert_eq!(res1, 69);
+        assert_eq!(res2, 69);
+    }
+
+    #[test]
+    fn test_sum_str_vec_given_multiple_elements_then_return_correct_res() {
+        let elf = "100\n100\n100";
+        let res = sum_str_vec(elf);
+        assert_eq!(res, 300);
+    }
 }

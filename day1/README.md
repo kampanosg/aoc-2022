@@ -7,4 +7,9 @@ To run the program (select which part: p1 or p2)
 cargo run -- input.txt p1
 ```
 
+To run the tests
+```bash
+cargo test
+```
+
 ![](https://media.giphy.com/media/3oz8xALpV1X2BPo7cI/giphy.gif)
