@@ -111,3 +111,45 @@ fn determine_hand(opponent_hand: enums::Hand, desired_outcome: enums::Outcome) -
         },
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{calc_round_points, enums};
+
+    const ROCK: enums::Hand = enums::Hand::Rock;
+    const PAPER: enums::Hand = enums::Hand::Paper;
+    const SCISSORS: enums::Hand = enums::Hand::Scissors;
+
+    #[test]
+    pub fn test_calc_round_points_winner() {
+        let res1 = calc_round_points(ROCK, PAPER);
+        let res2 = calc_round_points(PAPER, SCISSORS);
+        let res3 = calc_round_points(SCISSORS, ROCK);
+
+        assert_eq!(res1, 8);
+        assert_eq!(res2, 9);
+        assert_eq!(res3, 7);
+    }
+
+    #[test]
+    pub fn test_calc_round_points_loser() {
+        let res1 = calc_round_points(ROCK, SCISSORS);
+        let res2 = calc_round_points(PAPER, ROCK);
+        let res3 = calc_round_points(SCISSORS, PAPER);
+
+        assert_eq!(res1, 3);
+        assert_eq!(res2, 1);
+        assert_eq!(res3, 2);
+    }
+
+    #[test]
+    pub fn test_calc_round_points_draw() {
+        let res1 = calc_round_points(ROCK, ROCK);
+        let res2 = calc_round_points(PAPER, PAPER);
+        let res3 = calc_round_points(SCISSORS, SCISSORS);
+
+        assert_eq!(res1, 4);
+        assert_eq!(res2, 5);
+        assert_eq!(res3, 6);
+    }
+}
