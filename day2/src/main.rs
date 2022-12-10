@@ -105,9 +105,9 @@ fn determine_hand(opponent_hand: enums::Hand, desired_outcome: enums::Outcome) -
             enums::Hand::Scissors => enums::Hand::Scissors,
         },
         enums::Outcome::Lose => match opponent_hand {
-            enums::Hand::Rock => enums::Hand::Rock,
-            enums::Hand::Paper => enums::Hand::Paper,
-            enums::Hand::Scissors => enums::Hand::Scissors,
+            enums::Hand::Rock => enums::Hand::Scissors,
+            enums::Hand::Paper => enums::Hand::Rock,
+            enums::Hand::Scissors => enums::Hand::Paper,
         },
     }
 }

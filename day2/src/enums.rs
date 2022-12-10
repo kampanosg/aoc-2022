@@ -12,7 +12,7 @@ pub enum Result {
     Draw,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum Outcome {
     Win,
     Lose,
