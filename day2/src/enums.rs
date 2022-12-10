@@ -1,4 +1,5 @@
-enum Hand {
+#[derive(Debug)]
+pub enum Hand {
     Rock,
     Paper,
     Scissors,
@@ -12,11 +13,11 @@ enum Result {
 
 impl Hand {
     
-    fn transform(v: &str) -> Option<Hand> {
+    pub fn transform(v: &str) -> Option<Hand> {
         match v {
-            "A" | "X" => return Some(Rock),
-            "B" | "Y" => return Some(Paper),
-            "C" | "Z" => return Some(Scissors),
+            "A" | "X" => Some(Hand::Rock),
+            "B" | "Y" => Some(Hand::Paper),
+            "C" | "Z" => Some(Hand::Scissors),
             _ => None,
         }
     }

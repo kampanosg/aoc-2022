@@ -1,3 +1,4 @@
+pub mod enums;
 use std::{env, fs};
 
 
@@ -14,13 +15,29 @@ fn main() {
     let file_path = env::args().nth(1).expect("param not provided: file_path");
     let file_contents = fs::read_to_string(file_path).unwrap();
     
-    let rounds: Vec<&str> = file_contents
+    let rounds = file_contents
         .trim_end_matches("\n")
         .split("\n")
-        .collect();
+        .collect::<Vec<&str>>();
     
     for round in rounds.iter() {
-        println!("{}", round);
+        let (p1, p2) = transform_round(round);
+        println!("{:?}, {:?}", p1, p2);
         break;
     }
+}
+
+fn transform_round(round: &str) -> (enums::Hand, enums::Hand) {
+    let hands: Vec<&str> = round
+        .trim_end_matches("\n")
+        .split(" ")
+        .collect();
+
+    let p1 = hands[0];
+    let p2 = hands[1];
+
+    let hand1 = enums::Hand::transform(p1).expect("malformed input");
+    let hand2 = enums::Hand::transform(p2).expect("malformed input");
+    
+    return (hand1, hand2);
 }
