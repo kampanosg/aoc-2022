@@ -20,9 +20,17 @@ fn main() {
 
     let mut total_points: u64 = 0;
     for round in rounds.iter() {
-        total_points += calculate_round_points(round); 
+        total_points += calculate_round_points(round);
     }
     println!("total points: {}", total_points);
+}
+
+fn calculate_round_points(round: &str) -> u64 {
+    let (p1, p2) = transform_round(round);
+
+    let result = determine_result(p1, p2);
+    println!("{:?} v {:?} = {:?}", p1, p2, result);
+    result.points() + p2.bonus_points()
 }
 
 fn transform_round(round: &str) -> (enums::Hand, enums::Hand) {
@@ -54,13 +62,55 @@ fn determine_result(hand1: enums::Hand, hand2: enums::Hand) -> enums::Result {
             enums::Hand::Paper => enums::Result::Win,
             enums::Hand::Scissors => enums::Result::Draw,
         },
-    };
-
-    enums::Result::Win
+    }
 }
 
-fn calculate_round_points(round: &str) -> u64 {
-    let (p1, p2) = transform_round(round);
-    let result = determine_result(p1, p2);
-    result.points() + p2.bonus_points()
+#[cfg(test)]
+mod tests {
+    use crate::calculate_round_points;
+
+    #[test]
+    fn test_calculate_round_points_winner() {
+        let round1 = "C X"; // scissors v rock
+        let round2 = "A Y"; // rock v paper
+        let round3 = "B Z"; // paper v scissors
+
+        let res1 = calculate_round_points(round1);
+        let res2 = calculate_round_points(round2);
+        let res3 = calculate_round_points(round3);
+
+        assert_eq!(res1, 7);
+        assert_eq!(res2, 8);
+        assert_eq!(res3, 9);
+    }
+
+    #[test]
+    fn test_calculate_round_points_draw() {
+        let round1 = "A X"; // rock v rock
+        let round2 = "B Y"; // paper c paper
+        let round3 = "C Z"; // scissors v scissors
+
+        let res1 = calculate_round_points(round1);
+        let res2 = calculate_round_points(round2);
+        let res3 = calculate_round_points(round3);
+
+        assert_eq!(res1, 4);
+        assert_eq!(res2, 5);
+        assert_eq!(res3, 6);
+    }
+
+    #[test]
+    fn test_calculate_round_points_lose() {
+        let round1 = "B X"; // paper v rock
+        let round2 = "C Y"; // scissors c paper
+        let round3 = "A Z"; // rock v scissors
+
+        let res1 = calculate_round_points(round1);
+        let res2 = calculate_round_points(round2);
+        let res3 = calculate_round_points(round3);
+
+        assert_eq!(res1, 1);
+        assert_eq!(res2, 2);
+        assert_eq!(res3, 3);
+    }
 }
