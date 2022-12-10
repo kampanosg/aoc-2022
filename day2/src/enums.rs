@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum Hand {
     Rock,
     Paper,
@@ -13,7 +13,6 @@ pub enum Result {
 }
 
 impl Hand {
-    
     pub fn transform(v: &str) -> Option<Hand> {
         match v {
             "A" | "X" => Some(Hand::Rock),
@@ -23,4 +22,21 @@ impl Hand {
         }
     }
 
+    pub fn bonus_points(&self) -> u64 {
+        match *self {
+            Hand::Rock => 1,
+            Hand::Paper => 2,
+            Hand::Scissors => 3,
+        }
+    }
+}
+
+impl Result {
+    pub fn points(&self) -> u64 {
+        match *self {
+            Result::Win => 6,
+            Result::Draw => 3,
+            Result::Lose => 0,
+        }
+    }
 }
