@@ -27,9 +27,7 @@ fn main() {
 
 fn calculate_round_points(round: &str) -> u64 {
     let (p1, p2) = transform_round(round);
-
     let result = determine_result(p1, p2);
-    println!("{:?} v {:?} = {:?}", p1, p2, result);
     result.points() + p2.bonus_points()
 }
 
