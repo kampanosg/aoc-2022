@@ -26,16 +26,16 @@ fn main() {
 fn p1(rucksacks: Vec<Rucksack>) {
     let mut total_score = 0;
     for rucksack in rucksacks {
-        let mut seen_items = HashSet::new();
         let (first_compartment, second_compartment) = rucksack.compartments();
-        for item1 in first_compartment.chars() {
-            for item2 in second_compartment.chars() {
-                if item1 == item2 && !seen_items.contains(&item1) {
-                    total_score += get_score(item1);
-                    seen_items.insert(item1.clone());
-                }
-            }
-        }
+        let first_set: HashSet<char> = first_compartment.chars().into_iter().collect();
+        let second_set: HashSet<char> = second_compartment.chars().into_iter().collect();
+        total_score += first_set
+            .intersection(&second_set)
+            .into_iter()
+            .map(|c| get_score(*c))
+            .collect::<Vec<i32>>()
+            .iter()
+            .sum::<i32>();
     }
     println!("total: {}", total_score);
 }
