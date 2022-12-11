@@ -19,6 +19,7 @@ fn main() {
 
     match part.as_str() {
         "p1" => p1(rucksacks),
+        "p2" => p2(rucksacks),
         _ => println!("invalid part param (valid options: p1 | p2)"),
     }
 }
@@ -36,6 +37,15 @@ fn p1(rucksacks: Vec<Rucksack>) {
             .collect::<Vec<i32>>()
             .iter()
             .sum::<i32>();
+    }
+    println!("total: {}", total_score);
+}
+
+fn p2(rucksacks: Vec<Rucksack>) {
+    let mut total_score = 0;
+    let mut index = 0;
+    while index < rucksacks.len() {
+        
     }
     println!("total: {}", total_score);
 }
