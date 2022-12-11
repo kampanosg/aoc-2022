@@ -15,6 +15,9 @@ impl Rucksack {
     }
 
     pub fn compartments(&self) -> (String, String) {
+        if self.size() < 2 {
+            return (self.name.to_string(), String::from(""));
+        }
         (self.first_compartment(), self.second_compartment())
     }
 
@@ -122,5 +125,53 @@ mod tests {
     fn test_second_compartment_given_long_even_len_name_then_return_first_half() {
         let r = Rucksack::new("the_quick_brown_fox_THE_QUICK_BROWN_FOX_");
         assert_eq!(r.second_compartment(), "THE_QUICK_BROWN_FOX_")
+    }
+
+    #[test]
+    fn test_compartments_given_empty_name_then_return_empty_str() {
+        let r = Rucksack::new("");
+        assert_eq!(r.compartments(), (String::from(""), String::from("")))
+    }
+
+    #[test]
+    fn test_compartments_given_single_char_name_then_return_first_component() {
+        let r = Rucksack::new("g");
+        assert_eq!(r.compartments(), (String::from("g"), String::from("")))
+    }
+
+    #[test]
+    fn test_compartments_given_double_char_name_then_return_both_compartments() {
+        let r = Rucksack::new("gk");
+        assert_eq!(r.compartments(), (String::from("g"), String::from("k")))
+    }
+
+    #[test]
+    fn test_compartments_given_even_len_name_then_return_both_compartments() {
+        let r = Rucksack::new("abcdEFGH");
+        assert_eq!(
+            r.compartments(),
+            (String::from("abcd"), String::from("EFGH"))
+        )
+    }
+
+    #[test]
+    fn test_compartment_given_odd_len_name_then_return_both_compartments() {
+        let r = Rucksack::new("abcDEFG");
+        assert_eq!(
+            r.compartments(),
+            (String::from("abc"), String::from("DEFG"))
+        )
+    }
+
+    #[test]
+    fn test_compartments_given_long_even_len_name_then_return_both_compartments() {
+        let r = Rucksack::new("the_quick_brown_fox_THE_QUICK_BROWN_FOX_");
+        assert_eq!(
+            r.compartments(),
+            (
+                String::from("the_quick_brown_fox_"),
+                String::from("THE_QUICK_BROWN_FOX_")
+            )
+        )
     }
 }
