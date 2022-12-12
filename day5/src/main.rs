@@ -1,4 +1,4 @@
-use std::{env, fs};
+use std::{env, fs, collections::VecDeque};
 
 fn main() {
     let file_path = env::args().nth(1).expect("param not provided: file_path");
@@ -9,4 +9,44 @@ fn main() {
         .trim_end_matches("\n")
         .split("\n")
         .collect::<Vec<&str>>();
+
+
+    let bays = parse_bays(&bays_instructions[0..8]);
+    
+    
+}
+
+fn parse_bays(bays: &[&str]) -> Vec<VecDeque<char>> {
+    let mut filled_bays = vec![
+        VecDeque::new(),
+        VecDeque::new(),
+        VecDeque::new(),
+        VecDeque::new(),
+        VecDeque::new(),
+        VecDeque::new(),
+        VecDeque::new(),
+        VecDeque::new(),
+        VecDeque::new(),
+    ];
+
+    for b in bays {
+        // println!("{:?}", b); (35)
+        let mut index = 0;
+        let mut bay_index = 0;
+        while index < b.len() - 1 {
+            let one = b.chars().nth(index).unwrap();
+            let two = b.chars().nth(index + 1).unwrap();
+            let thr = b.chars().nth(index + 2).unwrap();
+            
+            // print!("{:?}", two);
+            match two {
+                ' ' => (),
+                c => filled_bays[bay_index].push_front(c),
+            };
+
+            index += 4;
+            bay_index += 1
+        }
+    }
+    filled_bays
 }
