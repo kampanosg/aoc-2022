@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Rucksack {
     name: String,
 }
@@ -8,6 +8,10 @@ impl Rucksack {
         return Rucksack {
             name: String::from(val),
         };
+    }
+
+    pub fn name(&self) -> String {
+        return self.name.to_string();
     }
 
     pub fn size(&self) -> usize {

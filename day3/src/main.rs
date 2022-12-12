@@ -1,5 +1,5 @@
 pub mod rucksack;
-use std::{env, fs, collections::HashSet};
+use std::{collections::HashSet, env, fs};
 
 use rucksack::Rucksack;
 
@@ -33,7 +33,7 @@ fn p1(rucksacks: Vec<Rucksack>) {
         total_score += first_set
             .intersection(&second_set)
             .into_iter()
-            .map(|c| get_score(*c))
+            .map(|c| get_priority(*c))
             .collect::<Vec<i32>>()
             .iter()
             .sum::<i32>();
@@ -43,14 +43,29 @@ fn p1(rucksacks: Vec<Rucksack>) {
 
 fn p2(rucksacks: Vec<Rucksack>) {
     let mut total_score = 0;
-    let mut index = 0;
-    while index < rucksacks.len() {
-        
+    let mut i = 0;
+    while i < rucksacks.len() {
+        let frst_rucksack = rucksacks[i].name().chars().collect::<Vec<char>>();
+        let scnd_rucksack = rucksacks[i + 1].name().chars().collect::<Vec<char>>();
+        let thrd_rucksack = rucksacks[i + 2].name().chars().collect::<Vec<char>>();
+        let mut group: Option<char> = None;
+        for c1 in frst_rucksack.clone() {
+            for c2 in scnd_rucksack.clone() {
+                for c3 in thrd_rucksack.clone() {
+                    if c1 == c2 && c2 == c3 && c3 == c2 {
+                        group = Some(c3);
+                        break;
+                    }
+                }
+            }
+        }
+        i += 3;
+        total_score += get_priority(group.unwrap());
     }
     println!("total: {}", total_score);
 }
 
-fn get_score(c: char) -> i32 {
+fn get_priority(c: char) -> i32 {
     match c {
         'a' => 1,
         'b' => 2,
