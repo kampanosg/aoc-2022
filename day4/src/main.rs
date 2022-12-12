@@ -40,3 +40,22 @@ fn parse_pair(pair: &str) -> Vec<u64> {
         .map(|e| e.parse().unwrap())
         .collect::<Vec<u64>>()
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{parse_pair, gen_range};
+
+    #[test]
+    fn test_parse_pair() {
+        assert_eq!(parse_pair("1-1"), vec![1, 1]);
+        assert_eq!(parse_pair("1-2"), vec![1, 2]);
+        assert_eq!(parse_pair("1-69"), vec![1, 69]);
+    }
+
+    #[test]
+    fn test_gen_range() {
+        assert_eq!(gen_range("1-1"), vec![1]);
+        assert_eq!(gen_range("1-2"), vec![1, 2]);
+        assert_eq!(gen_range("1-10"), vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    }
+}
