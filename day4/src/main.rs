@@ -17,15 +17,17 @@ fn main() {
 }
 
 fn p1(assignments: Vec<&str>) {
+    let mut total = 0;
     for assignment in assignments {
-        println!("{}", assignment);
         let pair = assignment.split(",").collect::<Vec<&str>>();
-        println!("{:?}", pair);
         let range1 = gen_range(pair[0]);
         let range2 = gen_range(pair[1]);
-        println!("{:?} {:?}", range1, range2);
+        if is_exactly_contained(range1, range2) {
+            total += 1;
+        }
         break;
     }
+    println!("{}", total);
 }
 
 fn gen_range(pair: &str) -> Vec<u64> {
@@ -41,9 +43,22 @@ fn parse_pair(pair: &str) -> Vec<u64> {
         .collect::<Vec<u64>>()
 }
 
+fn is_exactly_contained(range1: Vec<u64>, range2: Vec<u64>) -> bool {
+    if range1.len() > range2.len() {
+        return is_contained(range2, range1);
+    }
+    is_contained(range1, range2)
+}
+
+fn is_contained(smaller: Vec<u64>, larger: Vec<u64>) -> bool {
+    let (sm_fst, sm_lst) = (smaller[0], smaller[smaller.len() - 1]);
+    let (lg_fst, lg_lst) = (larger[0], larger[larger.len() - 1]);
+    sm_fst >= lg_fst && sm_lst <= lg_lst
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{parse_pair, gen_range};
+    use crate::{parse_pair, gen_range, is_exactly_contained};
 
     #[test]
     fn test_parse_pair() {
@@ -57,5 +72,32 @@ mod tests {
         assert_eq!(gen_range("1-1"), vec![1]);
         assert_eq!(gen_range("1-2"), vec![1, 2]);
         assert_eq!(gen_range("1-10"), vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    }
+
+    #[test]
+    fn test_is_exactly_contained() {
+        assert!(is_exactly_contained(vec![1], vec![1]));
+        assert!(is_exactly_contained(vec![1], vec![1, 2]));
+        assert!(is_exactly_contained(vec![2], vec![1, 2]));
+        assert!(is_exactly_contained(vec![1, 2], vec![1]));
+        assert!(is_exactly_contained(vec![1, 2], vec![2]));
+
+        assert!(!is_exactly_contained(vec![1], vec![2]));
+        assert!(!is_exactly_contained(vec![2], vec![1]));
+        assert!(!is_exactly_contained(vec![1, 2], vec![2, 3]));
+        assert!(!is_exactly_contained(vec![2, 3], vec![1, 2]));
+        assert!(!is_exactly_contained(vec![1, 2, 3], vec![4, 5, 6]));
+        assert!(!is_exactly_contained(vec![4, 5, 6], vec![1, 2, 3]));
+
+        // examples from problem definition
+        assert!(is_exactly_contained(vec![2, 3, 4, 5, 6, 7, 8], vec![3, 4, 5, 6, 7]));
+        assert!(is_exactly_contained(vec![6], vec![4, 5, 6]));
+        assert!(!is_exactly_contained(vec![2, 3, 4], vec![6, 7, 8]));
+        assert!(!is_exactly_contained(vec![3, 4], vec![4, 5]));
+        assert!(!is_exactly_contained(vec![5, 6, 7], vec![7, 8, 9]));
+        assert!(!is_exactly_contained(vec![5, 6, 7], vec![7, 8, 9]));
+        assert!(!is_exactly_contained(vec![5, 6, 7], vec![7, 8, 9]));
+        assert!(!is_exactly_contained(vec![2, 3, 4, 5, 6], vec![4, 5, 6, 7, 8]));
+
     }
 }
