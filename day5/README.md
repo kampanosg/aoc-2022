@@ -12,4 +12,4 @@ To run the tests
 cargo test
 ```
 
-![](https://giphy.com/clips/storyful-christmas-xmas-merry-U1KZSPuEvGCyrSqtNQ)
+![](https://media.giphy.com/media/1iTHo2aLKHaJw1DW/giphy.gif)
