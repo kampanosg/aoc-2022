@@ -1,7 +1,4 @@
-use std::{
-    collections::{hash_map, HashMap, VecDeque},
-    env, fs,
-};
+use std::{collections::VecDeque, env, fs};
 
 fn main() {
     let file_path = env::args().nth(1).expect("param not provided: file_path");
@@ -13,6 +10,14 @@ fn main() {
         .split("\n")
         .collect::<Vec<&str>>();
 
+    match part.as_str() {
+        "p1" => p1(bays_instructions),
+        "p2" => p2(bays_instructions),
+        _ => println!(""),
+    }
+}
+
+fn p1(bays_instructions: Vec<&str>) {
     let mut filled_bays: Vec<VecDeque<char>> = vec![
         VecDeque::new(),
         VecDeque::new(),
@@ -39,7 +44,6 @@ fn main() {
         }
     }
 
-
     for instruction in &bays_instructions[10..] {
         println!("{:?}", instruction);
         let parsed_instruction = instruction
@@ -54,15 +58,14 @@ fn main() {
         let destination = parsed_instruction[5].parse::<usize>().unwrap();
 
         for _ in 0..moves {
-            let container = filled_bays[origin-1].pop_back();
-            filled_bays[destination-1].push_back(container.unwrap());
+            let container = filled_bays[origin - 1].pop_back();
+            filled_bays[destination - 1].push_back(container.unwrap());
         }
     }
 
     for b in filled_bays {
         println!("{:?}", b);
     }
-
-
 }
 
+fn p2(bays_instructions: Vec<&str>) {}
