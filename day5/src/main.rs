@@ -44,18 +44,12 @@ fn p1(bays_instructions: Vec<&str>) {
         }
     }
 
-    for instruction in &bays_instructions[10..] {
-        println!("{:?}", instruction);
-        let parsed_instruction = instruction
-            .split(" ")
-            .collect::<Vec<&str>>()
-            .iter()
-            .map(|e| e.to_string())
-            .collect::<Vec<String>>();
+    for i in &bays_instructions[10..] {
+        let instruction = parse_instruction(i);
 
-        let moves = parsed_instruction[1].parse::<u64>().unwrap();
-        let origin = parsed_instruction[3].parse::<usize>().unwrap();
-        let destination = parsed_instruction[5].parse::<usize>().unwrap();
+        let moves = instruction[1].parse::<u64>().unwrap();
+        let origin = instruction[3].parse::<usize>().unwrap();
+        let destination = instruction[5].parse::<usize>().unwrap();
 
         for _ in 0..moves {
             let container = filled_bays[origin - 1].pop_back();
@@ -63,9 +57,7 @@ fn p1(bays_instructions: Vec<&str>) {
         }
     }
 
-    for b in filled_bays {
-        println!("{:?}", b);
-    }
+    print_solution(filled_bays);
 }
 
 fn p2(bays_instructions: Vec<&str>) {
@@ -95,28 +87,36 @@ fn p2(bays_instructions: Vec<&str>) {
         }
     }
 
-    for instruction in &bays_instructions[10..] {
-        let parsed_instruction = instruction
-            .split(" ")
-            .collect::<Vec<&str>>()
-            .iter()
-            .map(|e| e.to_string())
-            .collect::<Vec<String>>();
+    for i in &bays_instructions[10..] {
+        let instruction = parse_instruction(i);
 
-        let moves = parsed_instruction[1].parse::<u64>().unwrap();
-        let origin = parsed_instruction[3].parse::<usize>().unwrap();
-        let destination = parsed_instruction[5].parse::<usize>().unwrap();
+        let moves = instruction[1].parse::<u64>().unwrap();
+        let origin = instruction[3].parse::<usize>().unwrap();
+        let destination = instruction[5].parse::<usize>().unwrap();
 
         let mut containers_to_move = VecDeque::new();
         for _ in 0..moves {
-            containers_to_move.push_front(filled_bays[origin-1].pop_back());
+            containers_to_move.push_front(filled_bays[origin - 1].pop_back());
         }
         for c in containers_to_move {
-            filled_bays[destination-1].push_back(c.unwrap());
+            filled_bays[destination - 1].push_back(c.unwrap());
         }
     }
 
-    for b in filled_bays {
+    print_solution(filled_bays);
+}
+
+fn parse_instruction(instruction: &str) -> Vec<String> {
+    instruction
+        .split(" ")
+        .collect::<Vec<&str>>()
+        .iter()
+        .map(|e| e.to_string())
+        .collect::<Vec<String>>()
+}
+
+fn print_solution(bays: Vec<VecDeque<char>>) {
+    for b in bays {
         println!("{:?}", b);
     }
 }
