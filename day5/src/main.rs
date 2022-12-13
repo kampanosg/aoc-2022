@@ -18,33 +18,12 @@ fn main() {
 }
 
 fn p1(bays_instructions: Vec<&str>) {
-    let mut filled_bays: Vec<VecDeque<char>> = vec![
-        VecDeque::new(),
-        VecDeque::new(),
-        VecDeque::new(),
-        VecDeque::new(),
-        VecDeque::new(),
-        VecDeque::new(),
-        VecDeque::new(),
-        VecDeque::new(),
-        VecDeque::new(),
-    ];
+    let bays = &bays_instructions[0..8]; 
+    let instructions = &bays_instructions[10..];
 
-    for b in &bays_instructions[0..8] {
-        let mut index = 0;
-        let mut bay_index = 0;
-        while index < b.len() - 1 {
-            let container = b.chars().nth(index + 1).unwrap();
-            match container {
-                ' ' => (),
-                c => filled_bays[bay_index].push_front(c),
-            };
-            index += 4;
-            bay_index += 1
-        }
-    }
+    let mut filled_bays = parse_bays(bays);
 
-    for i in &bays_instructions[10..] {
+    for i in instructions {
         let instruction = parse_instruction(i);
 
         let moves = instruction[1].parse::<u64>().unwrap();
@@ -61,33 +40,12 @@ fn p1(bays_instructions: Vec<&str>) {
 }
 
 fn p2(bays_instructions: Vec<&str>) {
-    let mut filled_bays: Vec<VecDeque<char>> = vec![
-        VecDeque::new(),
-        VecDeque::new(),
-        VecDeque::new(),
-        VecDeque::new(),
-        VecDeque::new(),
-        VecDeque::new(),
-        VecDeque::new(),
-        VecDeque::new(),
-        VecDeque::new(),
-    ];
+    let bays = &bays_instructions[0..8]; 
+    let instructions = &bays_instructions[10..];
 
-    for b in &bays_instructions[0..8] {
-        let mut index = 0;
-        let mut bay_index = 0;
-        while index < b.len() - 1 {
-            let container = b.chars().nth(index + 1).unwrap();
-            match container {
-                ' ' => (),
-                c => filled_bays[bay_index].push_front(c),
-            };
-            index += 4;
-            bay_index += 1
-        }
-    }
+    let mut filled_bays = parse_bays(bays);
 
-    for i in &bays_instructions[10..] {
+    for i in instructions {
         let instruction = parse_instruction(i);
 
         let moves = instruction[1].parse::<u64>().unwrap();
@@ -115,8 +73,38 @@ fn parse_instruction(instruction: &str) -> Vec<String> {
         .collect::<Vec<String>>()
 }
 
+fn parse_bays(bays: &[&str]) -> Vec<VecDeque<char>> {
+    let mut filled_bays: Vec<VecDeque<char>> = vec![
+        VecDeque::new(),
+        VecDeque::new(),
+        VecDeque::new(),
+        VecDeque::new(),
+        VecDeque::new(),
+        VecDeque::new(),
+        VecDeque::new(),
+        VecDeque::new(),
+        VecDeque::new(),
+    ];
+
+    for b in bays {
+        let mut index = 0;
+        let mut bay_index = 0;
+        while index < b.len() - 1 {
+            let container = b.chars().nth(index + 1).unwrap();
+            match container {
+                ' ' => (),
+                c => filled_bays[bay_index].push_front(c),
+            };
+            index += 4;
+            bay_index += 1
+        }
+    }
+    filled_bays
+}
+
 fn print_solution(bays: Vec<VecDeque<char>>) {
     for b in bays {
         println!("{:?}", b);
     }
 }
+
