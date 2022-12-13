@@ -1,4 +1,7 @@
-use std::{env, fs, collections::VecDeque};
+use std::{
+    collections::{hash_map, HashMap, VecDeque},
+    env, fs,
+};
 
 fn main() {
     let file_path = env::args().nth(1).expect("param not provided: file_path");
@@ -10,12 +13,7 @@ fn main() {
         .split("\n")
         .collect::<Vec<&str>>();
 
-    let bays = parse_bays(&bays_instructions[0..8]);
-    
-}
-
-fn parse_bays(bays: &[&str]) -> Vec<VecDeque<char>> {
-    let mut filled_bays = vec![
+    let mut filled_bays: Vec<VecDeque<char>> = vec![
         VecDeque::new(),
         VecDeque::new(),
         VecDeque::new(),
@@ -27,7 +25,7 @@ fn parse_bays(bays: &[&str]) -> Vec<VecDeque<char>> {
         VecDeque::new(),
     ];
 
-    for b in bays {
+    for b in &bays_instructions[0..8] {
         let mut index = 0;
         let mut bay_index = 0;
         while index < b.len() - 1 {
@@ -40,5 +38,31 @@ fn parse_bays(bays: &[&str]) -> Vec<VecDeque<char>> {
             bay_index += 1
         }
     }
-    filled_bays
+
+
+    for instruction in &bays_instructions[10..] {
+        println!("{:?}", instruction);
+        let parsed_instruction = instruction
+            .split(" ")
+            .collect::<Vec<&str>>()
+            .iter()
+            .map(|e| e.to_string())
+            .collect::<Vec<String>>();
+
+        let moves = parsed_instruction[1].parse::<u64>().unwrap();
+        let origin = parsed_instruction[3].parse::<usize>().unwrap();
+        let destination = parsed_instruction[5].parse::<usize>().unwrap();
+
+        for _ in 0..moves {
+            let container = filled_bays[origin-1].pop_back();
+            filled_bays[destination-1].push_back(container.unwrap());
+        }
+    }
+
+    for b in filled_bays {
+        println!("{:?}", b);
+    }
+
+
 }
+
