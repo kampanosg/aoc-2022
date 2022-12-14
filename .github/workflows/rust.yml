@@ -22,35 +22,30 @@ jobs:
         cargo build --verbose
         cargo test --verbose
         cd ../
-
     - name: Day 2
       run: |
         cd ./day2
         cargo build --verbose
         cargo test --verbose
         cd ../
-
     - name: Day 3
       run: |
         cd ./day3
         cargo build --verbose
         cargo test --verbose
         cd ../
-
     - name: Day 4
       run: |
         cd ./day4
         cargo build --verbose
         cargo test --verbose
         cd ../
-
     - name: Day 5
       run: |
         cd ./day5
         cargo build --verbose
         cargo test --verbose
         cd ../
-
     - name: Day 6
       run: |
         cd ./day6
