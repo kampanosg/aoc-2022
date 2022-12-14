@@ -48,6 +48,63 @@ fn get_first_marker(signal: String) -> (char, usize) {
     (' ', 0)
 }
 
+fn get_first_msg(signal: String) -> usize {
+    let mut counter_a = 0;
+    let mut counter_b = 1;
+    let mut counter_c = 2;
+    let mut counter_d = 3;
+    let mut counter_e = 4;
+    let mut counter_f = 5;
+    let mut counter_g = 6;
+    let mut counter_h = 7;
+    let mut counter_i = 8;
+    let mut counter_j = 9;
+    let mut counter_k = 10;
+    let mut counter_l = 11;
+    let mut counter_m = 12;
+    let mut counter_n = 13;
+
+    while counter_e < signal.len() - 1 {
+
+        let signal_bits = vec![
+            signal.chars().nth(counter_a).unwrap(),
+            signal.chars().nth(counter_b).unwrap(),
+            signal.chars().nth(counter_c).unwrap(),
+            signal.chars().nth(counter_d).unwrap(),
+            signal.chars().nth(counter_e).unwrap(),
+            signal.chars().nth(counter_f).unwrap(),
+            signal.chars().nth(counter_g).unwrap(),
+            signal.chars().nth(counter_h).unwrap(),
+            signal.chars().nth(counter_i).unwrap(),
+            signal.chars().nth(counter_j).unwrap(),
+            signal.chars().nth(counter_k).unwrap(),
+            signal.chars().nth(counter_l).unwrap(),
+            signal.chars().nth(counter_m).unwrap(),
+            signal.chars().nth(counter_n).unwrap(),
+        ];
+
+        if is_msg_seq(signal_bits) {
+            return counter_n + 1;
+        }
+
+        counter_a += 1;
+        counter_b += 1;
+        counter_c += 1;
+        counter_d += 1;
+        counter_e += 1;
+        counter_f += 1;
+        counter_g += 1;
+        counter_h += 1;
+        counter_i += 1;
+        counter_j += 1;
+        counter_k += 1;
+        counter_l += 1;
+        counter_m += 1;
+        counter_n += 1;
+    }
+    0
+}
+
 fn is_marker_seq(signal_bit_a: char, signal_bit_b: char, signal_bit_c: char, signal_bit_d: char) -> bool {
     let bits = HashSet::from([
         signal_bit_a,
@@ -58,24 +115,17 @@ fn is_marker_seq(signal_bit_a: char, signal_bit_b: char, signal_bit_c: char, sig
    bits.len() == 4 
 }
 
-// fn get_first_marker(signal: String) -> (char, usize) {
-//     let mut parsed_signal: Vec<char> = vec![];
-//     for c in signal.chars() {
-//         parsed_signal.push(c);
-//         if parsed_signal.len() < 4 {
-//             continue;
-//         }
-
-//         if contains_marker(&parsed_signal[0..&parsed_signal.len() - 1], c) {
-//             return (c, parsed_signal.len()); 
-//         }
-//     }
-//     (' ', 0)
-// }
+fn is_msg_seq(signal_bits: Vec<char>) -> bool {
+    let mut bits = HashSet::new();
+    for c in signal_bits {
+        bits.insert(c);
+    }
+    bits.len() == 14
+}
 
 #[cfg(test)]
 mod tests {
-    use crate::{get_first_marker, is_marker_seq};
+    use crate::{get_first_marker, is_marker_seq, is_msg_seq};
 
 
 #[test]
@@ -95,5 +145,10 @@ mod tests {
         assert_eq!(get_first_marker(String::from("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw")), ('r', 11));
     }
 
+    #[test]
+    fn test_is_msg_seq() {
+       assert!(is_msg_seq(vec!['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'])); 
+       assert!(!is_msg_seq(vec!['a', 'b', 'b', 'a', 'e', 'w', 'g', 'a', 'i', 'e', 'k', 'l', 'n', 'n']));
+    }
 
 }
