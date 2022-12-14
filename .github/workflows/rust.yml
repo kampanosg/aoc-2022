@@ -1,4 +1,4 @@
-name: Build & Test: AOC 2022
+name: AOC_2022
 
 on:
   push:
