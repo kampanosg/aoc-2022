@@ -1,4 +1,4 @@
-name: Rust
+name: Build & Test: AOC 2022
 
 on:
   push:
