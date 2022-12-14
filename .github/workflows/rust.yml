@@ -52,3 +52,9 @@ jobs:
         cargo build --verbose
         cargo test --verbose
         cd ../
+    - name: Day 7
+      run: |
+        cd ./day7
+        cargo build --verbose
+        cargo test --verbose
+        cd ../
