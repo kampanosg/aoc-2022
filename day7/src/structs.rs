@@ -16,7 +16,13 @@ pub struct Directory {
 }
 
 impl Directory {
-    pub fn new(name: String, parrent: Option<NodeId>) -> Self { Self { name, files: HashMap::new(), parrent } }
+    pub fn new(name: String, parrent: Option<NodeId>) -> Self {
+        Self {
+            name,
+            files: HashMap::new(),
+            parrent,
+        }
+    }
 
     pub fn append_file(&mut self, name: &str, size: u64) {
         self.files.entry(name.to_string()).or_insert(File {
