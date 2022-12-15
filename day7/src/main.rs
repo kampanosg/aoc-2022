@@ -1,5 +1,5 @@
 pub mod structs;
-use std::{env, fs};
+use std::{collections::HashMap, env, fs};
 
 fn main() {
     let file_path = env::args().nth(1).expect("param not provided: file_path");
@@ -21,7 +21,27 @@ fn main() {
 }
 
 fn p1(commands: Vec<&str>) {
-    
-    
+    let mut current_dir = structs::Directory::new(String::from("/"));
 
+    for c in &commands[1..] {
+        let command = c.split(" ").collect::<Vec<&str>>();
+
+        println!("{:?}", command);
+        match command[0] {
+            "$" => {
+                if command[1] == "cd" {
+                    if command[1] == ".." {
+                    } else {
+                    }
+                }
+            }
+            "dir" => {
+                let dir_name = command[1];
+                current_dir.append_dir(dir_name);
+            }
+            _ => {}
+        }
+    }
+
+    println!("{:?}", current_dir);
 }
