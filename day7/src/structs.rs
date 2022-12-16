@@ -4,8 +4,8 @@ use id_tree::NodeId;
 
 #[derive(Debug, Clone)]
 pub struct File {
-    name: String,
-    size: u64,
+    pub name: String,
+    pub size: u64,
 }
 
 impl File {
