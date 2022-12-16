@@ -18,6 +18,7 @@ fn main() {
 
     match part.as_str() {
         "p1" => p1(commands),
+        "p2" => p1(commands),
         _ => println!("invalid part param (valid options: p1 | p2)"),
     }
 }
