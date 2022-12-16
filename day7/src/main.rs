@@ -1,32 +1,9 @@
 pub mod structs;
 use id_tree::InsertBehavior::*;
 use id_tree::*;
-use std::{collections::{HashMap, HashSet}, env, fs};
-
-use crate::structs::Directory;
+use std::{collections::HashMap, env, fs};
 
 fn main() {
-    //     let mut tree: Tree<i32> = TreeBuilder::new()
-    //         .with_node_capacity(5)
-    //         .build();
-
-    //     let root_id: NodeId = tree.insert(Node::new(0), AsRoot).unwrap();
-    //     let child_id: NodeId = tree.insert(Node::new(1), UnderNode(&root_id)).unwrap();
-    //     tree.insert(Node::new(2), UnderNode(&root_id)).unwrap();
-    //     tree.insert(Node::new(3), UnderNode(&child_id)).unwrap();
-    //     tree.insert(Node::new(4), UnderNode(&child_id)).unwrap();
-    // tree.insert(Node::new(5), UnderNode(&child_id)).unwrap();
-    // tree.insert(Node::new(6), UnderNode(&child_id)).unwrap();
-
-    // let mut s = String::new();
-    // tree.write_formatted(&mut s).unwrap();
-    // println!("{}", s);
-
-    // println!("Pre-order:");
-    // for node in tree.traverse_pre_order(&root_id).unwrap() {
-    //     print!("{}, ", node.data());
-    // }
-
     let file_path = env::args().nth(1).expect("param not provided: file_path");
     let part = env::args()
         .nth(2)
@@ -49,7 +26,8 @@ fn p1(commands: Vec<&str>) {
     let mut tree: Tree<structs::Directory> = TreeBuilder::new().with_node_capacity(5).build();
 
     let root = structs::Directory::new("/".to_string(), None);
-    let mut current_dir: NodeId = tree.insert(Node::new(root), AsRoot).unwrap();
+    let root: NodeId = tree.insert(Node::new(root), AsRoot).unwrap();
+    let mut current_dir = root.clone();
 
     let mut files: HashMap<NodeId, Vec<structs::File>> = HashMap::new();
     let mut folders: HashMap<NodeId, HashMap<&str, NodeId>> = HashMap::new();
@@ -57,7 +35,6 @@ fn p1(commands: Vec<&str>) {
     for c in &commands[1..] {
         let command = c.split(" ").collect::<Vec<&str>>();
 
-        //     println!("{:?}", command);
         match command[0] {
             "$" => match command[1] {
                 "cd" => {
@@ -71,8 +48,8 @@ fn p1(commands: Vec<&str>) {
                         let next_dir = children.get(name).unwrap().clone();
                         current_dir = next_dir;
                     }
-                },
-                _ => ()
+                }
+                _ => (),
             },
             "dir" => {
                 let dir_name = command[1];
@@ -91,7 +68,7 @@ fn p1(commands: Vec<&str>) {
                     h.insert(dir_name.clone(), child_id.clone());
                     folders.insert(current_dir.clone(), h);
                 }
-            },
+            }
             _ => {
                 // catch the ls command
                 let file_name = command[1].to_string();
@@ -116,11 +93,39 @@ fn p1(commands: Vec<&str>) {
         }
     }
 
-    // println!("{:?}", current_dir);
+    let mut sizes: HashMap<NodeId, u64> = HashMap::new();
+    for node in tree.traverse_pre_order_ids(&root).unwrap() {
+        let size = calc_size(&tree, node.clone(), files.clone());
+        sizes.insert(node.clone(), size);
+    }
 
-    let mut s = String::new();
-    tree.write_formatted(&mut s).unwrap();
-    println!("{}", s);
+    let mut small_sizes = 0;
+    for (_k, v) in &sizes {
+        if v <= &100000 {
+            small_sizes += v;
+        }
+    }
+    println!("total: {}", small_sizes);
+}
 
-    println!("{:?}", files);
+fn calc_size(
+    tree: &Tree<structs::Directory>,
+    node_id: NodeId,
+    files: HashMap<NodeId, Vec<structs::File>>,
+) -> u64 {
+    let mut total: u64 = 0;
+
+    total += files
+        .get(&node_id.clone())
+        .unwrap()
+        .iter()
+        .map(|f| f.size)
+        .sum::<u64>();
+
+    let children = tree.get(&node_id).unwrap().children();
+    for child_node in children {
+        total += calc_size(tree, child_node.clone(), files.clone());
+    }
+
+    total
 }
