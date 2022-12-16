@@ -49,21 +49,14 @@ fn p1(commands: Vec<&str>) {
     let root = structs::Directory::new("/".to_string(), None);
     let current_dir: NodeId = tree.insert(Node::new(root), AsRoot).unwrap();
 
+    let mut files: HashMap<NodeId, Vec<structs::File>> = HashMap::new();
+
     for c in &commands[1..] {
         let command = c.split(" ").collect::<Vec<&str>>();
 
         //     println!("{:?}", command);
         match command[0] {
-            //         "$" => {
-            //             if command[1] == "cd" {
-            //                 if command[1] == ".." {
-            //                 } else {
-            //                     let dir_name = command[2];
-            //                     let next_dir = current_dir.get_dir(dir_name);
-            //                     current_dir = next_dir.clone();
-            //                 }
-            //             }
-            //         }
+            "$" => {}
             "dir" => {
                 let dir_name = command[1];
                 let nested_dir =
@@ -72,11 +65,20 @@ fn p1(commands: Vec<&str>) {
                     .insert(Node::new(nested_dir), UnderNode(&current_dir))
                     .unwrap();
             }
-            _ => {} //         _ => {
-                    //             let file_name = command[1];
-                    //             let file_size = command[0].parse::<u64>().unwrap();
-                    //             current_dir.append_file(file_name, file_size);
-                    //         }
+            _ => {
+                // catch the ls command
+                println!("{:?}", command);
+                let file_name = command[1].to_string();
+                let file_size = command[0].parse::<u64>().unwrap();
+                let file = structs::File::new(file_name, file_size);
+                if files.contains_key(&current_dir.clone()) {
+                    let mut dir_files = files.get(&current_dir.clone()).unwrap().to_vec();
+                    dir_files.push(file);
+                    files.insert(current_dir.clone(), dir_files.clone());
+                } else {
+                    files.insert(current_dir.clone(), vec![file]);
+                }
+            }
         }
     }
 
@@ -85,4 +87,6 @@ fn p1(commands: Vec<&str>) {
     let mut s = String::new();
     tree.write_formatted(&mut s).unwrap();
     println!("{}", s);
+
+    println!("{:?}", files);
 }

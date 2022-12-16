@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, fmt};
 
 use id_tree::NodeId;
 
@@ -8,26 +8,32 @@ pub struct File {
     size: u64,
 }
 
-#[derive(Debug, Clone)]
+impl File {
+    pub fn new(name: String, size: u64) -> Self {
+        Self { name, size }
+    }
+}
+
+#[derive(Clone)]
 pub struct Directory {
     pub name: String,
-    pub files: HashMap<String, File>,
     pub parrent: Option<NodeId>,
 }
 
 impl Directory {
     pub fn new(name: String, parrent: Option<NodeId>) -> Self {
-        Self {
-            name,
-            files: HashMap::new(),
-            parrent,
-        }
+        Self { name, parrent }
     }
+}
 
-    pub fn append_file(&mut self, name: &str, size: u64) {
-        self.files.entry(name.to_string()).or_insert(File {
-            name: name.to_string(),
-            size,
-        });
+impl fmt::Display for Directory {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}/", self.name)
+    }
+}
+
+impl fmt::Debug for Directory {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}/", self.name)
     }
 }
