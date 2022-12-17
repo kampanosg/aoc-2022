@@ -13,7 +13,7 @@ pub struct Tree {
 #[derive(Debug, Clone)]
 pub struct Forrest {
     pub trees: Vec<Vec<Tree>>,
-    edge: Coordinates,
+    pub edge: Coordinates,
 }
 
 impl Tree {
@@ -39,10 +39,6 @@ impl Forrest {
     }
 
     pub fn is_edge(&self, tree: Tree) -> bool {
-        println!(
-            "{:?} {:?} - {:?} {:?}",
-            tree.coords.x, tree.coords.y, self.edge.x, self.edge.y
-        );
         tree.coords.x <= 0
             || tree.coords.y <= 0
             || tree.coords.x >= self.edge.x
