@@ -52,9 +52,15 @@ jobs:
         cargo build --verbose
         cargo test --verbose
         cd ../
-    - name: Day 7
+    # - name: Day 7 TAKING TOO LONG AND THERE ARE NO TESTS
+    #   run: |
+    #     cd ./day7
+    #     cargo build --verbose
+    #     cargo test --verbose
+    #     cd ../
+    - name: Day 8
       run: |
-        cd ./day7
+        cd ./day8
         cargo build --verbose
         cargo test --verbose
         cd ../
