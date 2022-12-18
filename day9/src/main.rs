@@ -18,7 +18,7 @@ fn main() {
 
 fn p1(instructions: Vec<&str>) {
     let mut head: (i64, i64) = (0, 0);
-    let mut _tail = (0, 0);
+    let mut tail = (0, 0);
 
     for instruction in instructions {
         let instruction = instruction.split(" ").collect::<Vec<&str>>();
@@ -37,7 +37,11 @@ fn p1(instructions: Vec<&str>) {
         }
 
         head = (current_x, current_y);
-        println!("{:?}", head);
+        println!("head = {:?}, tail = {:?}", head, tail);
+
+        if is_adjacent(head, tail) {
+            println!("adjacent");
+        }
     }
 
     println!("{:?}", head);
@@ -51,31 +55,34 @@ fn is_adjacent(h: (i64, i64), t: (i64, i64)) -> bool {
     let (hx, hy) = h;
     let (tx, ty) = t;
 
-    if are_adjacent_bottom(hy, ty) {
-        return true;
-    }
-
-    false
+    are_adjacent_top(hx, hy, tx, ty)
+        || are_adjacent_tr(hx, hy, tx, ty)
+        || are_adjacent_right(hx, hy, tx, ty)
+        || are_adjacent_br(hx, hy, tx, ty)
+        || are_adjacent_bottom(hx, hy, tx, ty)
+        || are_adjacent_bl(hx, hy, tx, ty)
+        || are_adjacent_left(hx, hy, tx, ty)
+        || are_adjacent_tl(hx, hy, tx, ty)
 }
 
 fn are_overlapping(h: (i64, i64), t: (i64, i64)) -> bool {
     h == t
 }
 
-fn are_adjacent_bottom(hy: i64, ty: i64) -> bool {
-    (hy - 1) == ty
+fn are_adjacent_bottom(hx: i64, hy: i64, tx: i64, ty: i64) -> bool {
+    ((hy - 1) == ty) && (hx == tx)
 }
 
-fn are_adjacent_top(hy: i64, ty: i64) -> bool {
-    (hy + 1) == ty
+fn are_adjacent_top(hx: i64, hy: i64, tx: i64, ty: i64) -> bool {
+    ((hy + 1) == ty) && (hx == tx)
 }
 
-fn are_adjacent_right(hx: i64, tx: i64) -> bool {
-    (hx + 1) == tx
+fn are_adjacent_right(hx: i64, hy: i64, tx: i64, ty: i64) -> bool {
+    ((hx + 1) == tx) && (hy == ty)
 }
 
-fn are_adjacent_left(hx: i64, tx: i64) -> bool {
-    (hx - 1) == tx
+fn are_adjacent_left(hx: i64, hy: i64, tx: i64, ty: i64) -> bool {
+    ((hx - 1) == tx) && (hy == ty)
 }
 
 fn are_adjacent_tl(hx: i64, hy: i64, tx: i64, ty: i64) -> bool {
