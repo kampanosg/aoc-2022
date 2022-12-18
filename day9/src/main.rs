@@ -121,38 +121,31 @@ mod tests {
 
     #[test]
     fn test_are_adjacent_bottom() {
-        assert!(are_adjacent_bottom(10, 9));
-        assert!(are_adjacent_bottom(1, 0));
-        assert!(are_adjacent_bottom(0, -1));
-        assert!(!are_adjacent_bottom(10, 8));
-        assert!(!are_adjacent_bottom(1, -1));
+        assert!(are_adjacent_bottom(10, 10, 10, 9));
+        assert!(!are_adjacent_bottom(10, 10, 10, 10));
+        assert!(!are_adjacent_bottom(10, 10, 10, 11));
+        assert!(!are_adjacent_bottom(10, 10, 9, 9));
     }
 
     #[test]
     fn test_are_adjacent_top() {
-        assert!(are_adjacent_top(9, 10));
-        assert!(are_adjacent_top(1, 2));
-        assert!(are_adjacent_top(-1, 0));
-        assert!(!are_adjacent_top(10, 12));
-        assert!(!are_adjacent_top(1, 4));
+        assert!(are_adjacent_top(10, 10, 10, 11));
+        assert!(!are_adjacent_top(10, 10, 10, 9));
+        assert!(!are_adjacent_top(10, 10, 10, 12));
     }
 
     #[test]
     fn test_are_adjacent_right() {
-        assert!(are_adjacent_right(0, 1));
-        assert!(are_adjacent_right(1, 2));
-        assert!(are_adjacent_right(-1, 0));
-        assert!(!are_adjacent_right(10, 12));
-        assert!(!are_adjacent_right(1, 4));
+        assert!(are_adjacent_right(10, 10, 11, 10));
+        assert!(!are_adjacent_right(10, 10, 10, 8));
     }
 
     #[test]
     fn test_are_adjacent_left() {
-        assert!(are_adjacent_left(1, 0));
-        assert!(are_adjacent_left(2, 1));
-        assert!(are_adjacent_left(0, -1));
-        assert!(!are_adjacent_left(10, 12));
-        assert!(!are_adjacent_left(-1, -3));
+        assert!(are_adjacent_left(10, 10, 9, 10));
+        assert!(!are_adjacent_left(10, 10, 10, 10));
+        assert!(!are_adjacent_left(10, 10, 10, 12));
+        assert!(!are_adjacent_left(10, 10, 11, 11));
     }
 
     #[test]
