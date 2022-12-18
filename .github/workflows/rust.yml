@@ -64,3 +64,9 @@ jobs:
         cargo build --verbose
         cargo test --verbose
         cd ../
+    - name: Day 9
+      run: |
+        cd ./day9
+        cargo build --verbose
+        cargo test --verbose
+ 
