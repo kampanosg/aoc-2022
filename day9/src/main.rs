@@ -35,8 +35,6 @@ fn p1(instructions: Vec<&str>) {
             "D" => current_y -= count,
             _ => println!("huh?"),
         }
-        
-
 
         head = (current_x, current_y);
         println!("{:?}", head);
@@ -49,6 +47,14 @@ fn is_adjacent(h: (i64, i64), t: (i64, i64)) -> bool {
     if are_overlapping(h, t) {
         return true;
     }
+
+    let (hx, hy) = h;
+    let (tx, ty) = t;
+
+    if are_adjacent_bottom(hy, ty) {
+        return true;
+    }
+
     false    
  }
 
@@ -56,10 +62,14 @@ fn are_overlapping(h: (i64, i64), t: (i64, i64)) -> bool {
     h == t
 }
 
+fn are_adjacent_bottom(hy: i64, ty: i64) -> bool {
+    (hy - 1) == ty
+}
+
 
 #[cfg(test)]
 mod tests {
-    use crate::are_overlapping;
+    use crate::{are_overlapping, are_adjacent_bottom};
 
 
     #[test]
@@ -71,6 +81,15 @@ mod tests {
         assert!(!are_overlapping((0, 1), (1, 0)));
         assert!(!are_overlapping((-10, -10), (10, 10)));
         assert!(!are_overlapping((1, 2), (3, 4)));
+    }
+
+    #[test]
+    fn test_are_adjacent_bottom() {
+        assert!(are_adjacent_bottom(10, 9));
+        assert!(are_adjacent_bottom(1, 0));
+        assert!(are_adjacent_bottom(0, -1));
+        assert!(!are_adjacent_bottom(10, 8));
+        assert!(!are_adjacent_bottom(1, -1));
     }
 
 }
