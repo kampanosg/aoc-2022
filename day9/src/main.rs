@@ -55,8 +55,8 @@ fn is_adjacent(h: (i64, i64), t: (i64, i64)) -> bool {
         return true;
     }
 
-    false    
- }
+    false
+}
 
 fn are_overlapping(h: (i64, i64), t: (i64, i64)) -> bool {
     h == t
@@ -74,11 +74,32 @@ fn are_adjacent_right(hx: i64, tx: i64) -> bool {
     (hx + 1) == tx
 }
 
+fn are_adjacent_left(hx: i64, tx: i64) -> bool {
+    (hx - 1) == tx
+}
+
+fn are_adjacent_tl(hx: i64, hy: i64, tx: i64, ty: i64) -> bool {
+    ((hx - 1) == tx) && ((hy + 1) == ty)
+}
+
+fn are_adjacent_tr(hx: i64, hy: i64, tx: i64, ty: i64) -> bool {
+    ((hx + 1) == tx) && ((hy + 1) == ty)
+}
+
+fn are_adjacent_bl(hx: i64, hy: i64, tx: i64, ty: i64) -> bool {
+    ((hx - 1) == tx) && ((hy - 1) == ty)
+}
+
+fn are_adjacent_br(hx: i64, hy: i64, tx: i64, ty: i64) -> bool {
+    ((hx + 1) == tx) && ((hy - 1) == ty)
+}
 
 #[cfg(test)]
 mod tests {
-    use crate::{are_overlapping, are_adjacent_bottom, are_adjacent_top, are_adjacent_right};
-
+    use crate::{
+        are_adjacent_bl, are_adjacent_bottom, are_adjacent_br, are_adjacent_left,
+        are_adjacent_right, are_adjacent_tl, are_adjacent_top, are_adjacent_tr, are_overlapping,
+    };
 
     #[test]
     fn test_are_overlapping() {
@@ -100,7 +121,6 @@ mod tests {
         assert!(!are_adjacent_bottom(1, -1));
     }
 
-
     #[test]
     fn test_are_adjacent_top() {
         assert!(are_adjacent_top(9, 10));
@@ -109,7 +129,6 @@ mod tests {
         assert!(!are_adjacent_top(10, 12));
         assert!(!are_adjacent_top(1, 4));
     }
-
 
     #[test]
     fn test_are_adjacent_right() {
@@ -120,4 +139,44 @@ mod tests {
         assert!(!are_adjacent_right(1, 4));
     }
 
+    #[test]
+    fn test_are_adjacent_left() {
+        assert!(are_adjacent_left(1, 0));
+        assert!(are_adjacent_left(2, 1));
+        assert!(are_adjacent_left(0, -1));
+        assert!(!are_adjacent_left(10, 12));
+        assert!(!are_adjacent_left(-1, -3));
+    }
+
+    #[test]
+    fn test_are_adjacent_tl() {
+        assert!(are_adjacent_tl(1, 0, 0, 1));
+        assert!(!are_adjacent_tl(1, 0, 1, 1));
+        assert!(!are_adjacent_tl(1, 0, 2, 1));
+        assert!(!are_adjacent_tl(1, 0, 0, 0));
+    }
+
+    #[test]
+    fn test_are_adjacent_tr() {
+        assert!(are_adjacent_tr(1, 0, 2, 1));
+        assert!(!are_adjacent_tr(1, 0, 1, 0));
+        assert!(!are_adjacent_tr(1, 0, 1, 1));
+        assert!(!are_adjacent_tr(1, 0, 0, 0));
+    }
+
+    #[test]
+    fn test_are_adjacent_bl() {
+        assert!(are_adjacent_bl(1, 1, 0, 0));
+        assert!(!are_adjacent_bl(1, 1, 1, 0));
+        assert!(!are_adjacent_bl(1, 1, 0, 1));
+        assert!(!are_adjacent_bl(1, 1, 0, 2));
+    }
+
+    #[test]
+    fn test_are_adjacent_br() {
+        assert!(are_adjacent_br(1, 1, 2, 0));
+        assert!(!are_adjacent_br(1, 1, 2, 1));
+        assert!(!are_adjacent_br(1, 1, 1, 2));
+        assert!(!are_adjacent_br(1, 1, 0, 0));
+    }
 }
