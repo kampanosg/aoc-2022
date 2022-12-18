@@ -40,27 +40,36 @@ fn p1(instructions: Vec<&str>) {
                     current_tx += 1;
                     tail = (current_tx, current_ty);
                 }
-            },
+            }
             "L" => current_hx -= count,
             "U" => {
                 for _ in 0..count {
-                    
+                    current_hy += 1;
+                    head = (current_hx, current_hy);
+                    print!("head = {:?}", head);
+                    if is_adjacent(head, tail) {
+                        print!(" (adjacent) tail = {:?} | ", tail);
+                        continue;
+                    }
+                    current_ty += 1;
+                    tail = (current_tx, current_ty);
+                    print!(" tail = {:?} | ", tail);
                 }
-            },
+                println!();
+            }
             "D" => current_hy -= count,
             _ => println!("huh?"),
         }
 
-//         head = (current_x, current_y);
+        //         head = (current_x, current_y);
         println!("head = {:?}, tail = {:?}", head, tail);
 
-//         if is_adjacent(head, tail) {
-//             println!("adjacent");
-//         }
-        break;
+        //         if is_adjacent(head, tail) {
+        //             println!("adjacent");
+        //         }
     }
 
-    println!("head = {:?}, tail = {:?}", head, tail);
+    // println!("head = {:?}, tail = {:?}", head, tail);
 }
 
 fn is_adjacent(h: (i64, i64), t: (i64, i64)) -> bool {
@@ -117,11 +126,24 @@ fn are_adjacent_br(hx: i64, hy: i64, tx: i64, ty: i64) -> bool {
     ((hx + 1) == tx) && ((hy - 1) == ty)
 }
 
+fn is_tail_far_back(h: (i64, i64), t: (i64, i64)) -> bool {
+    let (hx, hy) = h;
+    let (tx, ty) = t;
+
+    let is_diff_col = hx != tx;
+
+    let is_further_up = (hy + 2) == ty;
+    let is_further_down = (hy - 2) == ty;
+
+    is_diff_col && (is_further_up || is_further_down)
+}
+
 #[cfg(test)]
 mod tests {
     use crate::{
         are_adjacent_bl, are_adjacent_bottom, are_adjacent_br, are_adjacent_left,
         are_adjacent_right, are_adjacent_tl, are_adjacent_top, are_adjacent_tr, are_overlapping,
+        is_tail_far_back,
     };
 
     #[test]
@@ -194,5 +216,17 @@ mod tests {
         assert!(!are_adjacent_br(1, 1, 2, 1));
         assert!(!are_adjacent_br(1, 1, 1, 2));
         assert!(!are_adjacent_br(1, 1, 0, 0));
+    }
+
+    #[test]
+    fn test_is_tail_further_back() {
+        assert!(is_tail_far_back((4, 2), (3, 4)));
+        assert!(is_tail_far_back((4, 2), (5, 4)));
+        assert!(is_tail_far_back((4, 2), (3, 0)));
+        assert!(is_tail_far_back((4, 2), (5, 0)));
+        assert!(!is_tail_far_back((4, 2), (4, 4)));
+        assert!(!is_tail_far_back((4, 2), (5, 2)));
+        assert!(!is_tail_far_back((4, 2), (4, 0)));
+        assert!(!is_tail_far_back((4, 2), (3, 2)));
     }
 }
