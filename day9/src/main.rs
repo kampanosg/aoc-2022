@@ -51,6 +51,23 @@ fn p1(instructions: Vec<&str>) {
                         print!(" (adjacent) tail = {:?} | ", tail);
                         continue;
                     }
+                    if is_tail_far_back(head, tail) {
+                        print!(" (failling behind) ");
+                        if current_hx > current_ty {
+                            // head has moved towards top-right
+                            // so tail has to move diagonally top-right
+                            current_tx += 1;
+                            current_ty += 1;
+                        } else {
+                            // head has moved towards top-left
+                            // so tail has to move diagonally top left
+                            current_tx -= 1;
+                            current_ty += 1;
+                        }
+                        tail = (current_tx, current_ty);
+                        print!("tail = {:?} ", tail);
+                        continue;
+                    }
                     current_ty += 1;
                     tail = (current_tx, current_ty);
                     print!(" tail = {:?} | ", tail);
@@ -62,14 +79,15 @@ fn p1(instructions: Vec<&str>) {
         }
 
         //         head = (current_x, current_y);
-        println!("head = {:?}, tail = {:?}", head, tail);
+        // println!("head = {:?}, tail = {:?}", head, tail);
 
         //         if is_adjacent(head, tail) {
         //             println!("adjacent");
         //         }
     }
 
-    // println!("head = {:?}, tail = {:?}", head, tail);
+    println!();
+    println!("head = {:?}, tail = {:?}", head, tail);
 }
 
 fn is_adjacent(h: (i64, i64), t: (i64, i64)) -> bool {
