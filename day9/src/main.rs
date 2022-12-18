@@ -66,10 +66,18 @@ fn are_adjacent_bottom(hy: i64, ty: i64) -> bool {
     (hy - 1) == ty
 }
 
+fn are_adjacent_top(hy: i64, ty: i64) -> bool {
+    (hy + 1) == ty
+}
+
+fn are_adjacent_right(hx: i64, tx: i64) -> bool {
+    (hx + 1) == tx
+}
+
 
 #[cfg(test)]
 mod tests {
-    use crate::{are_overlapping, are_adjacent_bottom};
+    use crate::{are_overlapping, are_adjacent_bottom, are_adjacent_top, are_adjacent_right};
 
 
     #[test]
@@ -90,6 +98,26 @@ mod tests {
         assert!(are_adjacent_bottom(0, -1));
         assert!(!are_adjacent_bottom(10, 8));
         assert!(!are_adjacent_bottom(1, -1));
+    }
+
+
+    #[test]
+    fn test_are_adjacent_top() {
+        assert!(are_adjacent_top(9, 10));
+        assert!(are_adjacent_top(1, 2));
+        assert!(are_adjacent_top(-1, 0));
+        assert!(!are_adjacent_top(10, 12));
+        assert!(!are_adjacent_top(1, 4));
+    }
+
+
+    #[test]
+    fn test_are_adjacent_right() {
+        assert!(are_adjacent_right(0, 1));
+        assert!(are_adjacent_right(1, 2));
+        assert!(are_adjacent_right(-1, 0));
+        assert!(!are_adjacent_right(10, 12));
+        assert!(!are_adjacent_right(1, 4));
     }
 
 }
