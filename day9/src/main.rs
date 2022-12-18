@@ -41,18 +41,22 @@ fn p1(instructions: Vec<&str>) {
                     tail = (current_tx, current_ty);
                 }
             }
-            "L" => current_hx -= count,
+            "L" => {
+                for _ in 0..count {
+                    // current_hx
+                }
+            }
             "U" => {
                 for _ in 0..count {
                     current_hy += 1;
                     head = (current_hx, current_hy);
-                    print!("head = {:?}", head);
+                    // print!("head = {:?}", head);
                     if is_adjacent(head, tail) {
-                        print!(" (adjacent) tail = {:?} | ", tail);
+                        // print!(" (adjacent) tail = {:?} | ", tail);
                         continue;
                     }
-                    if is_tail_far_back(head, tail) {
-                        print!(" (failling behind) ");
+                    if is_tail_vetically_far_back(head, tail) {
+                        // print!(" (failling behind) ");
                         if current_hx > current_ty {
                             // head has moved towards top-right
                             // so tail has to move diagonally top-right
@@ -65,14 +69,14 @@ fn p1(instructions: Vec<&str>) {
                             current_ty += 1;
                         }
                         tail = (current_tx, current_ty);
-                        print!("tail = {:?} ", tail);
+                        // print!("tail = {:?} ", tail);
                         continue;
                     }
                     current_ty += 1;
                     tail = (current_tx, current_ty);
-                    print!(" tail = {:?} | ", tail);
+                    // print!(" tail = {:?} | ", tail);
                 }
-                println!();
+                // println!();
             }
             "D" => current_hy -= count,
             _ => println!("huh?"),
@@ -144,16 +148,28 @@ fn are_adjacent_br(hx: i64, hy: i64, tx: i64, ty: i64) -> bool {
     ((hx + 1) == tx) && ((hy - 1) == ty)
 }
 
-fn is_tail_far_back(h: (i64, i64), t: (i64, i64)) -> bool {
+fn is_tail_vetically_far_back(h: (i64, i64), t: (i64, i64)) -> bool {
     let (hx, hy) = h;
     let (tx, ty) = t;
 
     let is_diff_col = hx != tx;
 
-    let is_further_up = (hy + 2) == ty;
-    let is_further_down = (hy - 2) == ty;
+    let is_head_further_up = (hy + 2) == ty;
+    let is_head_further_down = (hy - 2) == ty;
 
-    is_diff_col && (is_further_up || is_further_down)
+    is_diff_col && (is_head_further_up || is_head_further_down)
+}
+
+fn is_tail_horizontally_far_back(h: (i64, i64), t: (i64, i64)) -> bool {
+    let (hx, hy) = h;
+    let (tx, ty) = t;
+
+    let is_diff_row = hy != ty;
+
+    let is_head_further_right = (tx + 2) == hx;
+    let is_head_further_left = (tx - 2) == hx;
+
+    is_diff_row && (is_head_further_left || is_head_further_right)
 }
 
 #[cfg(test)]
@@ -161,7 +177,7 @@ mod tests {
     use crate::{
         are_adjacent_bl, are_adjacent_bottom, are_adjacent_br, are_adjacent_left,
         are_adjacent_right, are_adjacent_tl, are_adjacent_top, are_adjacent_tr, are_overlapping,
-        is_tail_far_back,
+        is_tail_horizontally_far_back, is_tail_vetically_far_back,
     };
 
     #[test]
@@ -237,14 +253,30 @@ mod tests {
     }
 
     #[test]
-    fn test_is_tail_further_back() {
-        assert!(is_tail_far_back((4, 2), (3, 4)));
-        assert!(is_tail_far_back((4, 2), (5, 4)));
-        assert!(is_tail_far_back((4, 2), (3, 0)));
-        assert!(is_tail_far_back((4, 2), (5, 0)));
-        assert!(!is_tail_far_back((4, 2), (4, 4)));
-        assert!(!is_tail_far_back((4, 2), (5, 2)));
-        assert!(!is_tail_far_back((4, 2), (4, 0)));
-        assert!(!is_tail_far_back((4, 2), (3, 2)));
+    fn test_is_tail_vertically_further_back() {
+        assert!(is_tail_vetically_far_back((4, 2), (3, 4)));
+        assert!(is_tail_vetically_far_back((4, 2), (5, 4)));
+        assert!(is_tail_vetically_far_back((4, 2), (3, 0)));
+        assert!(is_tail_vetically_far_back((4, 2), (5, 0)));
+        assert!(!is_tail_vetically_far_back((4, 2), (4, 4)));
+        assert!(!is_tail_vetically_far_back((4, 2), (5, 2)));
+        assert!(!is_tail_vetically_far_back((4, 2), (4, 0)));
+        assert!(!is_tail_vetically_far_back((4, 2), (3, 2)));
+    }
+
+    #[test]
+    fn test_is_tail_horizontally_further_back() {
+        assert!(is_tail_horizontally_far_back((2, 2), (0, 3)));
+        assert!(is_tail_horizontally_far_back((2, 2), (4, 3)));
+        assert!(is_tail_horizontally_far_back((2, 2), (4, 1)));
+        assert!(is_tail_horizontally_far_back((2, 2), (0, 1)));
+        assert!(!is_tail_horizontally_far_back((2, 2), (1, 3)));
+        assert!(!is_tail_horizontally_far_back((2, 2), (2, 3)));
+        assert!(!is_tail_horizontally_far_back((2, 2), (3, 3)));
+        assert!(!is_tail_horizontally_far_back((2, 2), (3, 2)));
+        assert!(!is_tail_horizontally_far_back((2, 2), (3, 1)));
+        assert!(!is_tail_horizontally_far_back((2, 2), (2, 1)));
+        assert!(!is_tail_horizontally_far_back((2, 2), (1, 1)));
+        assert!(!is_tail_horizontally_far_back((2, 2), (1, 2)));
     }
 }
