@@ -26,25 +26,41 @@ fn p1(instructions: Vec<&str>) {
         let count = instruction[1].parse::<i64>().unwrap();
 
         print!("{:?} {:?} - ", direction, count);
-        let (mut current_x, mut current_y) = head;
+        let (mut current_hx, mut current_hy) = head;
+        let (mut current_tx, mut current_ty) = tail;
 
         match direction {
-            "R" => current_x += count,
-            "L" => current_x -= count,
-            "U" => current_y += count,
-            "D" => current_y -= count,
+            "R" => {
+                for _ in 0..count {
+                    current_hx += 1;
+                    head = (current_hx, current_hy);
+                    if is_adjacent(head, tail) {
+                        continue;
+                    }
+                    current_tx += 1;
+                    tail = (current_tx, current_ty);
+                }
+            },
+            "L" => current_hx -= count,
+            "U" => {
+                for _ in 0..count {
+                    
+                }
+            },
+            "D" => current_hy -= count,
             _ => println!("huh?"),
         }
 
-        head = (current_x, current_y);
+//         head = (current_x, current_y);
         println!("head = {:?}, tail = {:?}", head, tail);
 
-        if is_adjacent(head, tail) {
-            println!("adjacent");
-        }
+//         if is_adjacent(head, tail) {
+//             println!("adjacent");
+//         }
+        break;
     }
 
-    println!("{:?}", head);
+    println!("head = {:?}, tail = {:?}", head, tail);
 }
 
 fn is_adjacent(h: (i64, i64), t: (i64, i64)) -> bool {
