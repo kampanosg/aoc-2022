@@ -1,4 +1,4 @@
-use std::{env, fs};
+use std::{env, fs, collections::HashSet};
 
 fn main() {
     let file_path = env::args().nth(1).expect("param not provided: file_path");
@@ -19,15 +19,18 @@ fn main() {
 fn p1(instructions: Vec<&str>) {
     let mut head: (i64, i64) = (0, 0);
     let mut tail = (0, 0);
+    let mut tail_positions: HashSet<(i64, i64)> = HashSet::new();
+    tail_positions.insert((0, 0));
 
     for instruction in instructions {
         let instruction = instruction.split(" ").collect::<Vec<&str>>();
         let direction = instruction[0];
         let count = instruction[1].parse::<i64>().unwrap();
 
-        print!("{:?} {:?} - ", direction, count);
         let (mut current_hx, mut current_hy) = head;
         let (mut current_tx, mut current_ty) = tail;
+
+        println!("head = {:?}, tail = {:?}", head, tail);
 
         match direction {
             "R" => {
@@ -36,23 +39,28 @@ fn p1(instructions: Vec<&str>) {
                     head = (current_hx, current_hy);
 
                     if is_adjacent(head, tail) {
+                        println!("R - adjacent");
                         continue;
                     }
 
                     if is_tail_horizontally_far_back(head, tail) {
+                        print!("R - falling back - head = {:?}, tail = {:?}", head, tail);
                         if current_hy > current_ty {
                             // head has moved top-right
                             // tail needs to move diagonally top-right
                             current_ty += 1;
+                            println!(" - will move up");
                         } else {
                             // head has moved bottom-right
                             // tail needs to move bottom bottom-right
                             current_ty -= 1;
+                            println!(" - will move down");
                         }
-                        current_tx += 1;
                     }
                     current_tx += 1;
                     tail = (current_tx, current_ty);
+                    tail_positions.insert(tail);
+                    println!("R - head = {:?}, tail = {:?}", head, tail);
                 }
             }
             "L" => {
@@ -76,7 +84,8 @@ fn p1(instructions: Vec<&str>) {
                         }
                     }
                     current_tx -= 1;
-                    tail = (current_tx, current_ty)
+                    tail = (current_tx, current_ty);
+                    tail_positions.insert(tail);
                 }
             }
             "U" => {
@@ -103,6 +112,7 @@ fn p1(instructions: Vec<&str>) {
                     }
                     current_ty += 1;
                     tail = (current_tx, current_ty);
+                    tail_positions.insert(tail);
                     // print!(" tail = {:?} | ", tail);
                 }
                 // println!();
@@ -129,6 +139,7 @@ fn p1(instructions: Vec<&str>) {
                     }
                     current_ty -= 1;
                     tail = (current_tx, current_ty);
+                    tail_positions.insert(tail);
                 }
             }
             _ => println!("huh?"),
@@ -143,7 +154,9 @@ fn p1(instructions: Vec<&str>) {
     }
 
     println!();
-    println!("head = {:?}, tail = {:?}", head, tail);
+    println!("F - head = {:?}, tail = {:?}", head, tail);
+    println!("positions = {:?}", tail_positions);
+    println!("positions len = {}", tail_positions.len())
 }
 
 fn is_adjacent(h: (i64, i64), t: (i64, i64)) -> bool {
