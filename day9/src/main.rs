@@ -102,9 +102,7 @@ fn p2(instructions: Vec<&str>) {
 
             for (index, knot) in knots.clone().iter().enumerate() {
                 let (mut kx, mut ky) = knot;
-                // println!("{:?} {:?}, {:?} {:?}", prev_x, prev_y, kx, ky);
                 if are_separated(prev_x, prev_y, kx, ky) {
-                    // println!("index = {:?}, prev_x = {:?}, prev_y = {:?}, kx = {:?}, ky = {:?}", index, prev_x, prev_y, kx, ky);
                     let diff_x = prev_x - kx;
                     let diff_y = prev_y - ky;
                     kx += diff_x.signum();
@@ -117,8 +115,6 @@ fn p2(instructions: Vec<&str>) {
             }
             tail_positions.insert(*knots.last().unwrap());
         }
-        // println!("{:?} {:?}", head, knots);
-        // break;
     }
     println!("total positions: {}", tail_positions.len());
 }
@@ -154,6 +150,11 @@ mod tests {
 
     #[test]
     fn test_are_separated() {
-        assert!(are_separated(2, 0, 0, 0))
+        assert!(are_separated(2, 0, 0, 0));
+        assert!(are_separated(0, 2, 0, 0));
+        assert!(are_separated(2, 1, 0, 0));
+        assert!(are_separated(1, 2, 0, 0));
+        assert!(!are_separated(2, 1, 2, 1));
+        assert!(!are_separated(0, 0, 0, 0));
     }
 }
