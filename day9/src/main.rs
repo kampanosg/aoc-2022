@@ -1,4 +1,4 @@
-use std::{env, fs, collections::HashSet};
+use std::{collections::HashSet, env, fs};
 
 fn main() {
     let file_path = env::args().nth(1).expect("param not provided: file_path");
@@ -12,7 +12,6 @@ fn main() {
 
     match part.as_str() {
         "p1" => p1(instructions),
-        "p0" => part_1(),
         _ => println!(""),
     }
 }
@@ -31,8 +30,6 @@ fn p1(instructions: Vec<&str>) {
         let (mut current_hx, mut current_hy) = head;
         let (mut current_tx, mut current_ty) = tail;
 
-        // println!("head = {:?}, tail = {:?}", head, tail);
-        
         for _ in 0..count {
             match direction {
                 "R" => current_hx += 1,
@@ -54,7 +51,7 @@ fn p1(instructions: Vec<&str>) {
             // move the tail
             // + 1 if the diff is positive
             // - 1 if the diff is negative
-            // 0 don't move 
+            // 0 don't move
             current_tx += diff_x.signum();
             current_ty += diff_y.signum();
             tail = (current_tx, current_ty);
@@ -63,352 +60,28 @@ fn p1(instructions: Vec<&str>) {
     }
 
     println!("{}", tail_positions.len());
-
-        // match direction {
-        //     "R" => {
-        //         for _ in 0..count {
-        //             current_hx += 1;
-        //             head = (current_hx, current_hy);
-
-        //             if is_adjacent(head, tail) {
-        //                 // println!("R - adjacent");
-        //                 continue;
-        //             }
-
-        //             if is_tail_horizontally_far_back(head, tail) {
-        //                 // print!("R - falling back - head = {:?}, tail = {:?}", head, tail);
-        //                 if current_hy > current_ty {
-        //                     // head has moved top-right
-        //                     // tail needs to move diagonally top-right
-        //                     current_ty += 1;
-        //                     // println!(" - will move up");
-        //                 } else {
-        //                     // head has moved bottom-right
-        //                     // tail needs to move bottom bottom-right
-        //                     current_ty -= 1;
-        //                     // println!(" - will move down");
-        //                 }
-        //             }
-        //             current_tx += 1;
-        //             tail = (current_tx, current_ty);
-        //             tail_positions.insert(tail);
-        //             // println!("R - head = {:?}, tail = {:?}", head, tail);
-        //         }
-        //     }
-        //     "L" => {
-        //         for _ in 0..count {
-        //             current_hx -= 1;
-        //             head = (current_hx, current_hy);
-
-        //             if is_adjacent(head, tail) {
-        //                 continue;
-        //             }
-
-        //             if is_tail_horizontally_far_back(head, tail) {
-        //                 if current_hy > current_ty {
-        //                     // head has moved top-right
-        //                     // tail needs to move diagonally top-right
-        //                     current_ty += 1;
-        //                 } else {
-        //                     // head has moved bottom-right
-        //                     // tail needs to move bottom bottom-right
-        //                     current_ty -= 1;
-        //                 }
-        //             }
-        //             current_tx -= 1;
-        //             tail = (current_tx, current_ty);
-        //             tail_positions.insert(tail);
-        //         }
-        //     }
-        //     "U" => {
-        //         for _ in 0..count {
-        //             current_hy += 1;
-        //             head = (current_hx, current_hy);
-        //             // print!("head = {:?}", head);
-        //             if is_adjacent(head, tail) {
-        //                 // print!(" (adjacent) tail = {:?} | ", tail);
-        //                 continue;
-        //             }
-        //             if is_tail_vetically_far_back(head, tail) {
-        //                 // print!(" (failling behind) ");
-        //                 if current_hx > current_ty {
-        //                     // head has moved towards top-right
-        //                     // so tail has to move diagonally top-right
-        //                     current_tx += 1;
-        //                 } else {
-        //                     // head has moved towards top-left
-        //                     // so tail has to move diagonally top left
-        //                     current_tx -= 1;
-        //                 }
-        //                 // print!("tail = {:?} ", tail);
-        //             }
-        //             current_ty += 1;
-        //             tail = (current_tx, current_ty);
-        //             tail_positions.insert(tail);
-        //             // print!(" tail = {:?} | ", tail);
-        //         }
-        //         // println!();
-        //     }
-        //     "D" => {
-        //         for _ in 0..count {
-        //             current_hy -= 1;
-        //             head = (current_hx, current_hy);
-
-        //             if is_adjacent(head, tail) {
-        //                 continue;
-        //             }
-
-        //             if is_tail_vetically_far_back(head, tail) {
-        //                 if current_hx > current_ty {
-        //                     // head has moved towards top-right
-        //                     // so tail has to move diagonally top-right
-        //                     current_tx += 1;
-        //                 } else {
-        //                     // head has moved towards top-left
-        //                     // so tail has to move diagonally top left
-        //                     current_tx -= 1;
-        //                 }
-        //             }
-        //             current_ty -= 1;
-        //             tail = (current_tx, current_ty);
-        //             tail_positions.insert(tail);
-        //         }
-        //     }
-        //     _ => println!("huh?"),
-        // }
-
-        // //         head = (current_x, current_y);
-        // // println!("head = {:?}, tail = {:?}", head, tail);
-
-        // //         if is_adjacent(head, tail) {
-        // //             println!("adjacent");
-        // //         }
-    // }
-
-    // println!();
-    // // println!("F - head = {:?}, tail = {:?}", head, tail);
-    // println!("positions = {:?}", tail_positions);
-    // println!("positions len = {}", tail_positions.len())
 }
 
 fn are_adjacent(hx: i64, hy: i64, tx: i64, ty: i64) -> bool {
     let diff_x = (hx - tx).abs();
     let diff_y = (hy - ty).abs();
-    diff_x < 2 || diff_y < 2 
-}
-
-fn are_overlapping(h: (i64, i64), t: (i64, i64)) -> bool {
-    h == t
-}
-
-fn are_adjacent_bottom(hx: i64, hy: i64, tx: i64, ty: i64) -> bool {
-    ((hy - 1) == ty) && (hx == tx)
-}
-
-fn are_adjacent_top(hx: i64, hy: i64, tx: i64, ty: i64) -> bool {
-    ((hy + 1) == ty) && (hx == tx)
-}
-
-fn are_adjacent_right(hx: i64, hy: i64, tx: i64, ty: i64) -> bool {
-    ((hx + 1) == tx) && (hy == ty)
-}
-
-fn are_adjacent_left(hx: i64, hy: i64, tx: i64, ty: i64) -> bool {
-    ((hx - 1) == tx) && (hy == ty)
-}
-
-fn are_adjacent_tl(hx: i64, hy: i64, tx: i64, ty: i64) -> bool {
-    ((hx - 1) == tx) && ((hy + 1) == ty)
-}
-
-fn are_adjacent_tr(hx: i64, hy: i64, tx: i64, ty: i64) -> bool {
-    ((hx + 1) == tx) && ((hy + 1) == ty)
-}
-
-fn are_adjacent_bl(hx: i64, hy: i64, tx: i64, ty: i64) -> bool {
-    ((hx - 1) == tx) && ((hy - 1) == ty)
-}
-
-fn are_adjacent_br(hx: i64, hy: i64, tx: i64, ty: i64) -> bool {
-    ((hx + 1) == tx) && ((hy - 1) == ty)
-}
-
-fn is_tail_vetically_far_back(h: (i64, i64), t: (i64, i64)) -> bool {
-    let (hx, hy) = h;
-    let (tx, ty) = t;
-
-    let is_diff_col = hx != tx;
-
-    let is_head_further_up = (hy + 2) == ty;
-    let is_head_further_down = (hy - 2) == ty;
-
-    is_diff_col && (is_head_further_up || is_head_further_down)
-}
-
-fn is_tail_horizontally_far_back(h: (i64, i64), t: (i64, i64)) -> bool {
-    let (hx, hy) = h;
-    let (tx, ty) = t;
-
-    let is_diff_row = hy != ty;
-
-    let is_head_further_right = (tx + 2) == hx;
-    let is_head_further_left = (tx - 2) == hx;
-
-    is_diff_row && (is_head_further_left || is_head_further_right)
-}
-
-#[derive(Eq, Hash, PartialEq, Clone, Copy)]
-struct Coord {
-    x: isize,
-    y: isize,
-}
-
-pub fn part_1() {
-    let input = std::fs::read_to_string("input.txt").unwrap();
-    let start = Coord { x: 0, y: 0 };
-    let mut head = start;
-    let mut tail = start;
-    let mut seen = HashSet::new();
-    seen.insert(tail);
-
-    for line in input.lines() {
-        let (dir, amount) = line.split_once(' ').unwrap();
-        let amount = amount.parse().unwrap();
-
-        for _ in 0..amount {
-            // move head
-            match dir {
-                "U" => head.y -= 1,
-                "D" => head.y += 1,
-                "L" => head.x -= 1,
-                "R" => head.x += 1,
-                _ => panic!("tried to move in invalid direction"),
-            };
-
-            // determine if head and tail are touching
-            let diff = Coord {
-                x: head.x - tail.x,
-                y: head.y - tail.y,
-            };
-            let not_touching = diff.x.abs() > 1 || diff.y.abs() > 1;
-
-            // update tail and insert it into the seen set if needed
-            if not_touching {
-                tail.x += diff.x.signum();
-                tail.y += diff.y.signum();
-                seen.insert(tail);
-            }
-        }
-    }
-
-    println!("{:?}", seen.len())
+    diff_x < 2 || diff_y < 2
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{
-        are_adjacent_bl, are_adjacent_bottom, are_adjacent_br, are_adjacent_left,
-        are_adjacent_right, are_adjacent_tl, are_adjacent_top, are_adjacent_tr, are_overlapping,
-        is_tail_horizontally_far_back, is_tail_vetically_far_back,
-    };
+    use crate::are_adjacent;
 
     #[test]
-    fn test_are_overlapping() {
-        assert!(are_overlapping((0, 0), (0, 0)));
-        assert!(are_overlapping((1, 1), (1, 1)));
-        assert!(are_overlapping((69, 69), (69, 69)));
-        assert!(are_overlapping((-10, -10), (-10, -10)));
-        assert!(!are_overlapping((0, 1), (1, 0)));
-        assert!(!are_overlapping((-10, -10), (10, 10)));
-        assert!(!are_overlapping((1, 2), (3, 4)));
-    }
-
-    #[test]
-    fn test_are_adjacent_bottom() {
-        assert!(are_adjacent_bottom(10, 10, 10, 9));
-        assert!(!are_adjacent_bottom(10, 10, 10, 10));
-        assert!(!are_adjacent_bottom(10, 10, 10, 11));
-        assert!(!are_adjacent_bottom(10, 10, 9, 9));
-    }
-
-    #[test]
-    fn test_are_adjacent_top() {
-        assert!(are_adjacent_top(10, 10, 10, 11));
-        assert!(!are_adjacent_top(10, 10, 10, 9));
-        assert!(!are_adjacent_top(10, 10, 10, 12));
-    }
-
-    #[test]
-    fn test_are_adjacent_right() {
-        assert!(are_adjacent_right(10, 10, 11, 10));
-        assert!(!are_adjacent_right(10, 10, 10, 8));
-    }
-
-    #[test]
-    fn test_are_adjacent_left() {
-        assert!(are_adjacent_left(10, 10, 9, 10));
-        assert!(!are_adjacent_left(10, 10, 10, 10));
-        assert!(!are_adjacent_left(10, 10, 10, 12));
-        assert!(!are_adjacent_left(10, 10, 11, 11));
-    }
-
-    #[test]
-    fn test_are_adjacent_tl() {
-        assert!(are_adjacent_tl(1, 0, 0, 1));
-        assert!(!are_adjacent_tl(1, 0, 1, 1));
-        assert!(!are_adjacent_tl(1, 0, 2, 1));
-        assert!(!are_adjacent_tl(1, 0, 0, 0));
-    }
-
-    #[test]
-    fn test_are_adjacent_tr() {
-        assert!(are_adjacent_tr(1, 0, 2, 1));
-        assert!(!are_adjacent_tr(1, 0, 1, 0));
-        assert!(!are_adjacent_tr(1, 0, 1, 1));
-        assert!(!are_adjacent_tr(1, 0, 0, 0));
-    }
-
-    #[test]
-    fn test_are_adjacent_bl() {
-        assert!(are_adjacent_bl(1, 1, 0, 0));
-        assert!(!are_adjacent_bl(1, 1, 1, 0));
-        assert!(!are_adjacent_bl(1, 1, 0, 1));
-        assert!(!are_adjacent_bl(1, 1, 0, 2));
-    }
-
-    #[test]
-    fn test_are_adjacent_br() {
-        assert!(are_adjacent_br(1, 1, 2, 0));
-        assert!(!are_adjacent_br(1, 1, 2, 1));
-        assert!(!are_adjacent_br(1, 1, 1, 2));
-        assert!(!are_adjacent_br(1, 1, 0, 0));
-    }
-
-    #[test]
-    fn test_is_tail_vertically_further_back() {
-        assert!(is_tail_vetically_far_back((4, 2), (3, 4)));
-        assert!(is_tail_vetically_far_back((4, 2), (5, 4)));
-        assert!(is_tail_vetically_far_back((4, 2), (3, 0)));
-        assert!(is_tail_vetically_far_back((4, 2), (5, 0)));
-        assert!(!is_tail_vetically_far_back((4, 2), (4, 4)));
-        assert!(!is_tail_vetically_far_back((4, 2), (5, 2)));
-        assert!(!is_tail_vetically_far_back((4, 2), (4, 0)));
-        assert!(!is_tail_vetically_far_back((4, 2), (3, 2)));
-    }
-
-    #[test]
-    fn test_is_tail_horizontally_further_back() {
-        assert!(is_tail_horizontally_far_back((2, 2), (0, 3)));
-        assert!(is_tail_horizontally_far_back((2, 2), (4, 3)));
-        assert!(is_tail_horizontally_far_back((2, 2), (4, 1)));
-        assert!(is_tail_horizontally_far_back((2, 2), (0, 1)));
-        assert!(!is_tail_horizontally_far_back((2, 2), (1, 3)));
-        assert!(!is_tail_horizontally_far_back((2, 2), (2, 3)));
-        assert!(!is_tail_horizontally_far_back((2, 2), (3, 3)));
-        assert!(!is_tail_horizontally_far_back((2, 2), (3, 2)));
-        assert!(!is_tail_horizontally_far_back((2, 2), (3, 1)));
-        assert!(!is_tail_horizontally_far_back((2, 2), (2, 1)));
-        assert!(!is_tail_horizontally_far_back((2, 2), (1, 1)));
-        assert!(!is_tail_horizontally_far_back((2, 2), (1, 2)));
+    fn test_are_adjacent() {
+        assert!(are_adjacent(0, 0, 1, 1));
+        assert!(are_adjacent(0, 0, 0, 1));
+        assert!(are_adjacent(0, 0, 1, 0));
+        assert!(are_adjacent(0, 0, 0, 0));
+        assert!(are_adjacent(0, 0, -1, -1));
+        assert!(are_adjacent(0, 0, 1, 2));
+        assert!(are_adjacent(0, 0, 2, 1));
+        assert!(!are_adjacent(0, 0, 2, 2));
+        assert!(!are_adjacent(0, 0, -2, -2));
     }
 }
