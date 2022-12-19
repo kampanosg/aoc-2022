@@ -34,8 +34,22 @@ fn p1(instructions: Vec<&str>) {
                 for _ in 0..count {
                     current_hx += 1;
                     head = (current_hx, current_hy);
+
                     if is_adjacent(head, tail) {
                         continue;
+                    }
+
+                    if is_tail_horizontally_far_back(head, tail) {
+                        if current_hy > current_ty {
+                            // head has moved top-right
+                            // tail needs to move diagonally top-right
+                            current_ty += 1;
+                        } else {
+                            // head has moved bottom-right
+                            // tail needs to move bottom bottom-right
+                            current_ty -= 1;
+                        }
+                        current_tx += 1;
                     }
                     current_tx += 1;
                     tail = (current_tx, current_ty);
@@ -43,7 +57,26 @@ fn p1(instructions: Vec<&str>) {
             }
             "L" => {
                 for _ in 0..count {
-                    // current_hx
+                    current_hx -= 1;
+                    head = (current_hx, current_hy);
+
+                    if is_adjacent(head, tail) {
+                        continue;
+                    }
+
+                    if is_tail_horizontally_far_back(head, tail) {
+                        if current_hy > current_ty {
+                            // head has moved top-right
+                            // tail needs to move diagonally top-right
+                            current_ty += 1;
+                        } else {
+                            // head has moved bottom-right
+                            // tail needs to move bottom bottom-right
+                            current_ty -= 1;
+                        }
+                    }
+                    current_tx -= 1;
+                    tail = (current_tx, current_ty)
                 }
             }
             "U" => {
@@ -61,16 +94,12 @@ fn p1(instructions: Vec<&str>) {
                             // head has moved towards top-right
                             // so tail has to move diagonally top-right
                             current_tx += 1;
-                            current_ty += 1;
                         } else {
                             // head has moved towards top-left
                             // so tail has to move diagonally top left
                             current_tx -= 1;
-                            current_ty += 1;
                         }
-                        tail = (current_tx, current_ty);
                         // print!("tail = {:?} ", tail);
-                        continue;
                     }
                     current_ty += 1;
                     tail = (current_tx, current_ty);
@@ -78,7 +107,30 @@ fn p1(instructions: Vec<&str>) {
                 }
                 // println!();
             }
-            "D" => current_hy -= count,
+            "D" => {
+                for _ in 0..count {
+                    current_hy -= 1;
+                    head = (current_hx, current_hy);
+
+                    if is_adjacent(head, tail) {
+                        continue;
+                    }
+
+                    if is_tail_vetically_far_back(head, tail) {
+                        if current_hx > current_ty {
+                            // head has moved towards top-right
+                            // so tail has to move diagonally top-right
+                            current_tx += 1;
+                        } else {
+                            // head has moved towards top-left
+                            // so tail has to move diagonally top left
+                            current_tx -= 1;
+                        }
+                    }
+                    current_ty -= 1;
+                    tail = (current_tx, current_ty);
+                }
+            }
             _ => println!("huh?"),
         }
 
