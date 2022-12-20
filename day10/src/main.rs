@@ -12,6 +12,7 @@ fn main() {
 
     match part.as_str() {
         "p1" => p1(instructions),
+        "p2" => p2(instructions),
         _ => println!(""),
     }
 }
@@ -36,7 +37,7 @@ fn p1(commands: Vec<&str>) {
             clock += 1;
             match clock {
                 20 | 60 | 100 | 140 | 180 | 220 => signal_strength += register_x * clock,
-               _ => {}, 
+                _ => {}
             }
         }
 
@@ -49,26 +50,44 @@ fn p1(commands: Vec<&str>) {
     }
 
     println!("singal strength = {}", signal_strength);
+}
 
-    // for command in commands {
-    //     let command = command.split(" ").collect::<Vec<&str>>();
-    //     let instruction = command[0];
+fn p2(commands: Vec<&str>) {
+    let mut register_x = 1;
+    let mut sprite = (0, 0, 0);
 
-    //     match instruction {
-    //         "addx" => {
-    //             let val = command[1].parse::<i64>().unwrap();
-    //             register_x += val;
-    //             clock += 2;
-    //         }
-    //         "noop" => clock += 1,
-    //         _ => panic!("huh"),
-    //     }
+    let mut command_index = 0;
+    let mut command = commands[command_index].split(" ").collect::<Vec<&str>>();
+    let mut instruction = command[0];
+    let mut cycles = get_instr_cycles(instruction); 
+        
+    for y in 0..6 {
+        for x in 0..39 {
+            
+            cycles -= 1;
 
-    //     if clock >= 220 {
-    //         break;
-    //     }
-    // }
+            if cycles == 0 {
+                 if instruction == "addx" {
+                     let val = command[1].parse::<i64>().unwrap();
+                     register_x += val;
+                     // TODO: see where beam is
+                     println!("y = {}, x = {}, register_x = {}", y, x, register_x);
+                     return;
+                 }
+                 command_index += 1;
+                 command = commands[command_index].split(" ").collect::<Vec<&str>>();
+                 instruction = command[0];
+                 cycles = get_instr_cycles(instruction);
+            }
+        }
+    }
 
-    // println!("clock = {}", clock);
-    // println!("register_x = {}", register_x);
+}
+
+fn get_instr_cycles(instruction: &str) -> i64 {
+    match instruction {
+        "addx" => 2,
+        "noop" => 1,
+        _ => panic!("huh?"),
+    }
 }
