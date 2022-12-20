@@ -54,34 +54,42 @@ fn p1(commands: Vec<&str>) {
 
 fn p2(commands: Vec<&str>) {
     let mut register_x = 1;
-    let mut sprite = (0, 0, 0);
+    let mut sprite = (0, 1, 2);
 
     let mut command_index = 0;
     let mut command = commands[command_index].split(" ").collect::<Vec<&str>>();
     let mut instruction = command[0];
-    let mut cycles = get_instr_cycles(instruction); 
-        
-    for y in 0..6 {
-        for x in 0..39 {
-            
-            cycles -= 1;
+    let mut cycles = get_instr_cycles(instruction);
 
+    for _y in 0..6 {
+        for beam in 0..40 {
             if cycles == 0 {
-                 if instruction == "addx" {
-                     let val = command[1].parse::<i64>().unwrap();
-                     register_x += val;
-                     // TODO: see where beam is
-                     println!("y = {}, x = {}, register_x = {}", y, x, register_x);
-                     return;
-                 }
-                 command_index += 1;
-                 command = commands[command_index].split(" ").collect::<Vec<&str>>();
-                 instruction = command[0];
-                 cycles = get_instr_cycles(instruction);
-            }
-        }
-    }
+                if instruction == "addx" {
+                    let val = command[1].parse::<i64>().unwrap();
+                    register_x += val;
 
+                    let a = register_x - 1;
+                    let b = register_x;
+                    let c = register_x + 1;
+
+                    sprite = (a, b, c);
+                }
+                command_index += 1;
+                command = commands[command_index].split(" ").collect::<Vec<&str>>();
+                instruction = command[0];
+                cycles = get_instr_cycles(instruction);
+            }
+
+            if is_sprite_in_beam(sprite, beam) {
+                print!("#");
+            } else {
+                print!(".");
+            }
+
+            cycles -= 1;
+        }
+        println!();
+    }
 }
 
 fn get_instr_cycles(instruction: &str) -> i64 {
@@ -90,4 +98,9 @@ fn get_instr_cycles(instruction: &str) -> i64 {
         "noop" => 1,
         _ => panic!("huh?"),
     }
+}
+
+fn is_sprite_in_beam(sprite: (i64, i64, i64), beam: i64) -> bool {
+    let (s1, s2, s3) = sprite;
+    s1 == beam || s2 == beam || s3 == beam
 }
