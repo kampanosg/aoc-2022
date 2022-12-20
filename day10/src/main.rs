@@ -104,3 +104,16 @@ fn is_sprite_in_beam(sprite: (i64, i64, i64), beam: i64) -> bool {
     let (s1, s2, s3) = sprite;
     s1 == beam || s2 == beam || s3 == beam
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::is_sprite_in_beam;
+
+    #[test]
+    fn test_is_sprite_in_beam() {
+        assert!(is_sprite_in_beam((0, 1, 2), 0));
+        assert!(is_sprite_in_beam((0, 1, 2), 1));
+        assert!(is_sprite_in_beam((0, 1, 2), 2));
+        assert!(!is_sprite_in_beam((0, 1, 2), 3));
+    }
+}
