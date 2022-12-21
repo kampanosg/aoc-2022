@@ -12,4 +12,4 @@ To run the tests
 cargo test
 ```
 
-![](https://media.giphy.com/media/Oed7DmiCwi2YP3e8s8/giphy.gif)
+![](https://media.giphy.com/media/fwD6g7IsH2J0LnzlIy/giphy.gif)
