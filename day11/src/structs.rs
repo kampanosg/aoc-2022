@@ -12,7 +12,7 @@ pub struct Monke {
 #[derive(Debug, Clone)]
 pub struct BigMonke {
     pub items: Vec<BigUint>,
-    pub divident: BigUint,
+    pub divisor: u64,
     pub dest_t: i64,
     pub dest_f: i64,
     pub op: String,

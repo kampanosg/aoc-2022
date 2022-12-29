@@ -60,11 +60,9 @@ fn p1(monkeys: Vec<&str>) {
 
     for _ in 0..20 {
         for monke_number in 0..monkes.len() {
-            // println!("Monke {}:", monke_number);
             let monke = monkes[monke_number].clone();
             for loop_index in 0..monke.items.len() {
                 let item = monke.items[loop_index];
-                // print!("item = {}, ", item);
                 let worry_before_inspection = calc_worry_lvl(item.clone(), monke.op.clone());
                 let worry_after_inspection = worry_before_inspection / 3;
                 let next_monke_index: usize;
@@ -74,12 +72,6 @@ fn p1(monkeys: Vec<&str>) {
                 } else {
                     next_monke_index = usize::try_from(monke.dest_f).unwrap();
                 }
-
-                // println!(
-                //     "give = {:?}, to monke = {:?}",
-                //     worry_after_inspection, next_monke_index
-                // );
-
                 monkes[next_monke_index].items.push(worry_after_inspection);
 
                 let monke_number = i64::try_from(monke_number).unwrap();
@@ -93,36 +85,9 @@ fn p1(monkeys: Vec<&str>) {
             }
 
             monkes[monke_number].items.clear();
-
-            // println!();
-            // println!();
         }
     }
-
-    //     print!("monke {}: ", index);
-    //     for item in monke.items.clone() {
-    //         print!("{} ", item);
-    //     }
-    // println!();
-    // }
-
-    // println!();
-    // println!();
-
-    //     for (_monke, biz) in monke_biz.iter().enumerate() {
-    //         println!("monke {}, total biz: {:?}", biz.0, biz.1);
-    //     }
-
-    let mut l: Vec<_> = monke_biz.iter().map(|e| e.1).collect();
-    l.sort();
-    l.reverse();
-
-    //     println!();
-    //     println!("biz list = {:?}", l);
-
-    let total_monke_biz = l[0] * l[1];
-    println!();
-    println!("total monke biz = {}", total_monke_biz);
+    print_monke_biz(monke_biz);
 }
 
 fn p2(monkeys: Vec<&str>) {
@@ -142,12 +107,10 @@ fn p2(monkeys: Vec<&str>) {
             .collect::<Vec<BigUint>>();
 
         let op = monkey_array[2].trim().replace("Operation: new = ", "");
-        let divident = monkey_array[3]
+        let divisor = monkey_array[3]
             .trim()
             .replace("Test: divisible by ", "")
-            .parse::<i64>()
-            .unwrap()
-            .to_biguint()
+            .parse::<u64>()
             .unwrap();
         let dest_t = monkey_array[4]
             .trim()
@@ -161,7 +124,7 @@ fn p2(monkeys: Vec<&str>) {
             .unwrap();
         let monke = structs::BigMonke {
             items,
-            divident,
+            divisor,
             dest_f,
             dest_t,
             op,
@@ -170,29 +133,26 @@ fn p2(monkeys: Vec<&str>) {
         monkes.push(monke);
     }
 
-    for _ in 0..1000 {
+    let divisor_product = monkes.iter().map(|e| e.divisor).product::<u64>();
+    let zero = 0.to_biguint().unwrap();
+
+    for _ in 0..10_000 {
         for monke_number in 0..monkes.len() {
-            // println!("Monke {}:", monke_number);
             let monke = monkes[monke_number].clone();
             for loop_index in 0..monke.items.len() {
-                let item = monke.items[loop_index].clone();
-                // print!("item = {}, ", item);
-                let worry_before_inspection = calc_worry_lvl_2(item.clone(), monke.op.clone());
-                let worry_after_inspection = worry_before_inspection.clone() / 3.to_biguint().unwrap();
+                let mut item = monke.items[loop_index].clone();
+                item %= divisor_product;
+                item = calc_big_worry_lvl(item.clone(), monke.op.clone());
+
                 let next_monke_index: usize;
 
-                if worry_after_inspection.clone() % monke.divident.clone() == 0.to_biguint().unwrap() {
+                if item.clone() % monke.divisor == zero {
                     next_monke_index = usize::try_from(monke.dest_t).unwrap();
                 } else {
                     next_monke_index = usize::try_from(monke.dest_f).unwrap();
                 }
 
-                // println!(
-                //     "give = {:?}, to monke = {:?}",
-                //     worry_after_inspection, next_monke_index
-                // );
-
-                monkes[next_monke_index].items.push(worry_after_inspection.clone());
+                monkes[next_monke_index].items.push(item.clone());
 
                 let monke_number = i64::try_from(monke_number).unwrap();
 
@@ -205,36 +165,18 @@ fn p2(monkeys: Vec<&str>) {
             }
 
             monkes[monke_number].items.clear();
-
-            // println!();
-            // println!();
         }
     }
 
-    //     print!("monke {}: ", index);
-    //     for item in monke.items.clone() {
-    //         print!("{} ", item);
-    //     }
-    // println!();
-    // }
+    print_monke_biz(monke_biz);
 
-    // println!();
-    // println!();
+}
 
-    //     for (_monke, biz) in monke_biz.iter().enumerate() {
-    //         println!("monke {}, total biz: {:?}", biz.0, biz.1);
-    //     }
-
+fn print_monke_biz(monke_biz: HashMap<i64, i64>) {
     let mut l: Vec<_> = monke_biz.iter().map(|e| e.1).collect();
     l.sort();
     l.reverse();
-
-    //     println!();
-    //     println!("biz list = {:?}", l);
-
-    let total_monke_biz = l[0] * l[1];
-    println!();
-    println!("total monke biz = {}", total_monke_biz);
+    println!("total monke biz = {}", (l[0] * l[1]));
 }
 
 fn calc_worry_lvl(old_worry: i64, op: String) -> i64 {
@@ -254,19 +196,18 @@ fn calc_worry_lvl(old_worry: i64, op: String) -> i64 {
 }
 
 
-fn calc_worry_lvl_2(old_worry: BigUint, op: String) -> BigUint{
-    let f = old_worry.clone();
+fn calc_big_worry_lvl(worry: BigUint, op: String) -> BigUint{
     match op.as_str() {
-        "old * 19" => old_worry * 19.to_biguint().unwrap(),
-        "old + 6" => old_worry + 6.to_biguint().unwrap(),
-        "old * old" => old_worry * f,
-        "old + 3" => old_worry + 3.to_biguint().unwrap(),
-        "old * 13" => old_worry * 13.to_biguint().unwrap(),
-        "old + 7" => old_worry + 7.to_biguint().unwrap(),
-        "old + 5" => old_worry + 5.to_biguint().unwrap(),
-        "old + 8" => old_worry + 8.to_biguint().unwrap(),
-        "old * 5" => old_worry * 5.to_biguint().unwrap(),
-        "old + 2" => old_worry + 2.to_biguint().unwrap(),
-        &_ => 1.to_biguint().unwrap(),
+        "old * 19" => worry * 19.to_biguint().unwrap(),
+        "old + 6" => worry + 6.to_biguint().unwrap(),
+        "old * old" => worry.clone() * worry.clone(),
+        "old + 3" => worry + 3.to_biguint().unwrap(),
+        "old * 13" => worry * 13.to_biguint().unwrap(),
+        "old + 7" => worry + 7.to_biguint().unwrap(),
+        "old + 5" => worry + 5.to_biguint().unwrap(),
+        "old + 8" => worry + 8.to_biguint().unwrap(),
+        "old * 5" => worry * 5.to_biguint().unwrap(),
+        "old + 2" => worry + 2.to_biguint().unwrap(),
+        &_ => 0.to_biguint().unwrap(),
     }
 }
