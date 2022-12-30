@@ -32,7 +32,7 @@ impl From<char> for Hill {
     }
 }
 
-type AdjacentHills = [Option<(usize, usize)>; 4];
+pub type AdjacentHills = [Option<(usize, usize)>; 4];
 
 #[derive(Debug, Clone)]
 pub struct AreaMap {
@@ -40,4 +40,11 @@ pub struct AreaMap {
     pub graph: HashMap<(usize, usize), AdjacentHills>,
     pub start_at: (usize, usize),
     pub end_at: (usize, usize),
+}
+
+#[derive(Debug, Clone)]
+pub struct DownhillMap {
+    pub hills: Vec<Vec<Hill>>,
+    pub graph: HashMap<(usize, usize), AdjacentHills>,
+    pub summit: (usize, usize),
 }

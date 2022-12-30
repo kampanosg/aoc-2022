@@ -1,5 +1,6 @@
 pub mod structs;
 use core::cmp::Reverse;
+use std::cmp::min;
 use std::collections::{BinaryHeap, HashMap};
 use std::{env, fs};
 
@@ -13,6 +14,7 @@ fn main() {
 
     match part.as_str() {
         "p1" => p1(map),
+        "p2" => p2(map),
         _ => println!(""),
     }
 }
@@ -26,7 +28,6 @@ fn p1(map: structs::AreaMap) {
     let mut steps = HashMap::from([(start_at, 0)]);
 
     while let Some((_, pos)) = open.pop() {
-
         if pos == map.end_at {
             shortest_path = steps.get(&pos).copied().unwrap();
             break;
@@ -49,6 +50,20 @@ fn p1(map: structs::AreaMap) {
     }
 
     println!("shortest path = {}", shortest_path);
+}
+
+fn p2(map: structs::AreaMap) {
+    let dhill = parse_downhill_map(map);
+    let steps = shortest_steps_from_summit(dhill.clone());
+
+    let mut shortest_path = u32::MAX;
+    for (pos, steps_to_pos) in steps.iter() {
+        let (row, col) = *pos;
+        let structs::Hill::Hill(0) = dhill.clone().hills[row][col] else { continue; };
+        shortest_path = min(shortest_path, *steps_to_pos);
+    }
+
+    println!("{}", shortest_path);
 }
 
 fn parse_map(file_contents: String) -> structs::AreaMap {
@@ -102,3 +117,51 @@ fn parse_map(file_contents: String) -> structs::AreaMap {
         end_at,
     }
 }
+
+fn parse_downhill_map(map: structs::AreaMap) -> structs::DownhillMap {
+    let mut graph: HashMap<(usize, usize), structs::AdjacentHills> = HashMap::new();
+
+    for (pos, neighbors) in map.graph.iter() {
+        for neighbor in neighbors.iter().flatten() {
+            graph
+                .entry(*neighbor)
+                .or_default()
+                .iter_mut()
+                .filter(|slot| slot.is_none())
+                .take(1)
+                .for_each(|slot| *slot = Some(*pos));
+        }
+    }
+
+    let hills = map.hills.to_vec();
+    let summit = map.end_at;
+
+    structs::DownhillMap {
+        hills,
+        graph,
+        summit,
+    }
+}
+
+fn shortest_steps_from_summit(dhill_map: structs::DownhillMap) -> HashMap<(usize, usize), u32> {
+        let start_at = dhill_map.summit;
+        let mut open = BinaryHeap::from([(Reverse(0), start_at)]);
+        let mut steps = HashMap::from([(start_at, 0)]);
+
+        while let Some((_, pos)) = open.pop() {
+            
+            let Some(neighbors) = dhill_map.graph.get(&pos) else { continue; };
+            for maybe_neighbor in neighbors {
+                let Some(neighbor) = maybe_neighbor else { continue; };
+                let next_steps: u32 = steps.get(&pos).unwrap() + 1;
+                let curr_steps: u32 = *steps.get(neighbor).unwrap_or(&u32::MAX);
+                if next_steps >= curr_steps {
+                    continue;
+                }
+                open.push((Reverse(next_steps), *neighbor));
+                steps.insert(*neighbor, next_steps);
+            }
+        }
+
+        steps
+    }
