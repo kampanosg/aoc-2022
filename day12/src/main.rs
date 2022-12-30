@@ -17,6 +17,7 @@ fn main() {
     }
 }
 
+// Find the shortest possible path using Dijkstra's algorithm
 fn p1(map: structs::AreaMap) {
     let mut shortest_path = 0;
 
