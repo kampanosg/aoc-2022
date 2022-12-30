@@ -1,3 +1,6 @@
+use std::collections::HashMap;
+
+#[derive(Debug, Clone)]
 pub enum Hill {
     Start(u8),
     End(u8),
@@ -5,7 +8,7 @@ pub enum Hill {
 }
 
 impl Hill {
-    fn height(&self) -> u8 {
+    pub fn height(&self) -> u8 {
         match self {
             Hill::Start(h) => *h,
             Hill::End(h) => *h,
@@ -13,7 +16,7 @@ impl Hill {
         }
     }
 
-    fn can_reach(&self, other: &Hill) -> bool {
+    pub fn can_reach(&self, other: &Hill) -> bool {
         other.height().saturating_sub(self.height()) <= 1
     }
 }
@@ -31,6 +34,7 @@ impl From<char> for Hill {
 
 type AdjacentHills = [Option<(usize, usize)>; 4];
 
+#[derive(Debug, Clone)]
 pub struct AreaMap {
     pub hills: Vec<Vec<Hill>>,
     pub graph: HashMap<(usize, usize), AdjacentHills>,
