@@ -88,4 +88,10 @@ jobs:
         cargo build --verbose
         cargo test --verbose
         cd ..
+    - name: Day 13
+      run: |
+        cd ./day13
+        cargo build --verbose
+        cargo test --verbose
+        cd ..
  
