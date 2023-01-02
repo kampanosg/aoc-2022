@@ -1,4 +1,3 @@
-
 pub mod structs;
 use std::{env, fs};
 
@@ -8,17 +7,28 @@ fn main() {
 
     let file_contents = fs::read_to_string(file_path).unwrap();
 
-    let bits = bit_parser::parse(&file_contents);
-    dbg!(bits);
+    let bits = bit_parser::parse(&file_contents).unwrap();
 
     match part.as_str() {
-        "p1" => p1(),
+        "p1" => p1(bits),
         // "p2" => p2(map),
         _ => println!(""),
     }
 }
 
-fn p1() {}
+fn p1(packets: Vec<structs::Pair>) {
+    let mut total = 0;
+
+    for (idx, packet_pair) in packets.iter().enumerate() {
+        if !packet_pair.is_sorted() {
+            continue;
+        }
+
+        total += (idx as u32) + 1;
+    }
+
+    println!("total = {}", total);
+}
 
 mod bit_parser {
 
