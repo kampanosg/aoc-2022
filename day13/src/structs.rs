@@ -18,6 +18,15 @@ impl Pair {
     }
 }
 
+impl IntoIterator for Pair {
+    type Item = Packet;
+    type IntoIter = std::array::IntoIter<Self::Item, 2>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        [self.packet1, self.packet2].into_iter()
+    }
+}
+
 impl PartialOrd for Packet {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))

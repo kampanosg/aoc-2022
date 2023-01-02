@@ -11,7 +11,7 @@ fn main() {
 
     match part.as_str() {
         "p1" => p1(bits),
-        // "p2" => p2(map),
+        "p2" => p2(bits),
         _ => println!(""),
     }
 }
@@ -30,10 +30,37 @@ fn p1(packets: Vec<structs::Pair>) {
     println!("total = {}", total);
 }
 
+fn p2(packets: Vec<structs::Pair>) {
+
+    let divider1 =
+        structs::Packet::Packets(vec![structs::Packet::Packets(vec![structs::Packet::Bit(
+            2,
+        )])]);
+    let divider2 =
+        structs::Packet::Packets(vec![structs::Packet::Packets(vec![structs::Packet::Bit(
+            6,
+        )])]);
+    let dividers = [divider1, divider2];
+
+    let mut all_packets = packets
+        .iter()
+        .cloned()
+        .flatten()
+        .chain(dividers.iter().cloned())
+        .collect::<Vec<_>>();
+
+    all_packets.sort_unstable();
+
+    let mut total = 1;
+    for (idx, packet) in all_packets.iter().enumerate() {
+        if dividers.contains(packet) {
+            total *= (idx as u32) + 1;
+        }
+    }
+    println!("total: {}", total);
+}
+
 mod bit_parser {
-
-    use crate::structs::{self, Packet, Pair};
-
     use super::*;
     use anyhow::{anyhow, Result};
     use nom::{
@@ -62,7 +89,7 @@ mod bit_parser {
         alt((integer, list))(s)
     }
 
-    fn packet_pair(s: &str) -> IResult<&str, Pair> {
+    fn packet_pair(s: &str) -> IResult<&str, structs::Pair> {
         let (s, (first, second)) = separated_pair(packet, newline, packet)(s)?;
         Ok((
             s,
