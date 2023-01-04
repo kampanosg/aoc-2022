@@ -22,7 +22,7 @@ fn main() {
 fn p1(cave: structs::Cave) {
     let rock = structs::Rock::parse_from_rock_paths(&cave.rock_paths);
     let lowest_y = *rock.hor.keys().max().unwrap();
-    let mut rested = HashSet::<structs::Coord>::new();
+    let mut counter = HashSet::<structs::Coord>::new();
     let mut sand_particle = cave.sand;
 
     while sand_particle.y < lowest_y {
@@ -43,25 +43,25 @@ fn p1(cave: structs::Cave) {
 
         let next_pos = possible_moves
             .iter()
-            .find(|p| !rock.is_touching(p) && !rested.contains(p));
+            .find(|p| !rock.is_touching(p) && !counter.contains(p));
 
         match next_pos {
             Some(p) => sand_particle = *p,
             None => {
-                rested.insert(sand_particle);
+                counter.insert(sand_particle);
                 sand_particle = cave.sand;
             }
         }
     }
 
-    println!("total = {}", rested.len());
+    println!("total = {}", counter.len());
 }
 
 fn p2(cave: &structs::Cave) {
     let wall_edges = get_wall_edges(&cave.rock_paths);
 
-    let mut full_rock_paths: Vec<structs::Path> = cave.rock_paths.clone();
-    let floor: structs::Path = vec![
+    let mut rock_paths: Vec<structs::Path> = cave.rock_paths.clone();
+    let cave_floor: structs::Path = vec![
         structs::Coord {
             x: i32::MIN,
             y: wall_edges.edge2.y + 2,
@@ -71,19 +71,19 @@ fn p2(cave: &structs::Cave) {
             y: wall_edges.edge2.y + 2,
         },
     ];
-    full_rock_paths.push(floor);
+    rock_paths.push(cave_floor);
 
-    let data = &structs::Cave {
+    let cave = &structs::Cave {
         sand: cave.sand,
-        rock_paths: full_rock_paths,
+        rock_paths,
     };
 
-    let wall = structs::Rock::parse_from_rock_paths(&data.rock_paths);
-    let mut rested = HashSet::<structs::Coord>::new();
-
-    let mut sand_particle = data.sand;
+    let wall = structs::Rock::parse_from_rock_paths(&cave.rock_paths);
+    let mut counter = HashSet::<structs::Coord>::new();
+    let mut sand_particle = cave.sand;
 
     loop {
+
         let possible_moves = [
             structs::Coord {
                 x: sand_particle.x,
@@ -99,25 +99,25 @@ fn p2(cave: &structs::Cave) {
             },
         ];
 
-        let next_pos = possible_moves
+        let next_possible_moves = possible_moves
             .iter()
-            .find(|p| !wall.is_touching(p) && !rested.contains(p));
+            .find(|p| !wall.is_touching(p) && !counter.contains(p));
 
-        match next_pos {
+        match next_possible_moves {
             Some(p) => sand_particle = *p,
             None => {
-                rested.insert(sand_particle);
+                counter.insert(sand_particle);
 
-                if sand_particle == data.sand {
+                if sand_particle == cave.sand {
                     break;
                 }
 
-                sand_particle = data.sand;
+                sand_particle = cave.sand;
             }
         }
     }
 
-    println!("total: {}", rested.len());
+    println!("total: {}", counter.len());
 }
 
 fn get_wall_edges(paths: &Vec<structs::Path>) -> structs::WallEdges {
