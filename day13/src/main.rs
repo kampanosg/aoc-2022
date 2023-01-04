@@ -12,12 +12,14 @@ fn main() {
     match part.as_str() {
         "p1" => p1(bits),
         "p2" => p2(bits),
+        "p3" => p2(bits),
         _ => println!(""),
     }
 }
 
 fn p1(packets: Vec<structs::Pair>) {
     let mut total = 0;
+    let mut the_total = 0;
 
     for (idx, packet_pair) in packets.iter().enumerate() {
         if !packet_pair.is_sorted() {
