@@ -38,6 +38,11 @@ pub struct Rock {
     pub hor: HashMap<i32, HashSet<Range>>,
 }
 
+pub struct WallEdges {
+    pub edge1: Coord,
+    pub edge2: Coord,
+}
+
 impl Rock {
     pub fn is_touching(self: &Self, coord: &Coord) -> bool {
         let is_touching_h_wall = self.hor.get(&coord.y).map_or(false, |v| {

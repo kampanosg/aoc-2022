@@ -1,5 +1,5 @@
 pub mod structs;
-use std::{env, fs, collections::HashSet};
+use std::{collections::HashSet, env, fs};
 
 fn main() {
     let file_path = env::args().nth(1).expect("param not provided: file_path");
@@ -14,6 +14,7 @@ fn main() {
 
     match part.as_str() {
         "p1" => p1(cave),
+        "p2" => p2(&cave),
         _ => println!(""),
     }
 }
@@ -54,6 +55,100 @@ fn p1(cave: structs::Cave) {
     }
 
     println!("total = {}", rested.len());
+}
+
+fn p2(cave: &structs::Cave) {
+    let wall_edges = get_wall_edges(&cave.rock_paths);
+
+    let mut full_rock_paths: Vec<structs::Path> = cave.rock_paths.clone();
+    let floor: structs::Path = vec![
+        structs::Coord {
+            x: i32::MIN,
+            y: wall_edges.edge2.y + 2,
+        },
+        structs::Coord {
+            x: i32::MAX,
+            y: wall_edges.edge2.y + 2,
+        },
+    ];
+    full_rock_paths.push(floor);
+
+    let data = &structs::Cave {
+        sand: cave.sand,
+        rock_paths: full_rock_paths,
+    };
+
+    let wall = structs::Rock::parse_from_rock_paths(&data.rock_paths);
+    let mut rested = HashSet::<structs::Coord>::new();
+
+    let mut sand_particle = data.sand;
+
+    loop {
+        let possible_moves = [
+            structs::Coord {
+                x: sand_particle.x,
+                y: sand_particle.y + 1,
+            },
+            structs::Coord {
+                x: sand_particle.x - 1,
+                y: sand_particle.y + 1,
+            },
+            structs::Coord {
+                x: sand_particle.x + 1,
+                y: sand_particle.y + 1,
+            },
+        ];
+
+        let next_pos = possible_moves
+            .iter()
+            .find(|p| !wall.is_touching(p) && !rested.contains(p));
+
+        match next_pos {
+            Some(p) => sand_particle = *p,
+            None => {
+                rested.insert(sand_particle);
+
+                if sand_particle == data.sand {
+                    break;
+                }
+
+                sand_particle = data.sand;
+            }
+        }
+    }
+
+    println!("total: {}", rested.len());
+}
+
+fn get_wall_edges(paths: &Vec<structs::Path>) -> structs::WallEdges {
+    let rock_paths_iter = paths.iter().flatten();
+
+    let min_x = rock_paths_iter
+        .clone()
+        .min_by(|a, b| a.x.cmp(&b.x))
+        .unwrap()
+        .x;
+    let max_x = rock_paths_iter
+        .clone()
+        .max_by(|a, b| a.x.cmp(&b.x))
+        .unwrap()
+        .x;
+
+    let min_y = rock_paths_iter
+        .clone()
+        .min_by(|a, b| a.y.cmp(&b.y))
+        .unwrap()
+        .y;
+    let max_y = rock_paths_iter
+        .clone()
+        .max_by(|a, b| a.y.cmp(&b.y))
+        .unwrap()
+        .y;
+
+    structs::WallEdges {
+        edge1: structs::Coord { x: min_x, y: min_y },
+        edge2: structs::Coord { x: max_x, y: max_y },
+    }
 }
 
 fn parse_cave(input: &str) -> Vec<structs::Path> {
