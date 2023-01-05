@@ -1,5 +1,5 @@
 pub mod structs;
-use std::{env, fs, vec::IntoIter};
+use std::{collections::HashSet, env, fs};
 
 fn main() {
     let file_path = env::args().nth(1).expect("param not provided: file_path");
@@ -15,26 +15,46 @@ fn main() {
 }
 
 fn p1(sensors: Vec<structs::Sensor>) {
-    let mut unreachable_beacons = 0;
     let y_location_to_inspect = 2_000_000;
+    let beacon_x_coords = sensors
+        .iter()
+        .filter(|sensor| sensor.beacon.y == y_location_to_inspect)
+        .map(|sensor| sensor.beacon.x)
+        .collect::<HashSet<_>>();
 
-    let min_x = i64::MIN;
-    let max_x = i64::MAX;
+    let helpers = structs::Helpers { sensors };
 
-    for x in min_x..=max_x {
-        let point = structs::Coord { x, y: y_location_to_inspect };
+    let unreachable_beacons = helpers
+        .build_sensor_ranges(y_location_to_inspect)
+        .map(|r| {
+            let range_size = (r.end() - r.start() + 1) as usize;
+            let num_beacons_in_range = beacon_x_coords.iter().filter(|x| r.contains(x)).count();
+            range_size - num_beacons_in_range
+        })
+        .sum::<usize>();
 
-        if sensors.iter().any(|sensor| sensor.beacon == point) {
-            continue
-        } else if sensors.iter().any(|sensor| {
-            let radius = sensor.position.manhattan_distance(sensor.beacon);
-            sensor.position.manhattan_distance(point) <= radius
-        }) {
-            unreachable_beacons += 1
-        }
-    }
+    println!("unreachable beacons: {}", unreachable_beacons);
 
-    println!("total beacons: {}", unreachable_beacons)
+    // let mut unreachable_beacons = 0;
+    // let y_location_to_inspect = 2_000_000;
+
+    // let min_x = i64::MIN;
+    // let max_x = i64::MAX;
+
+    // for x in min_x..=max_x {
+    //     let point = structs::Coord { x, y: y_location_to_inspect };
+
+    //     if sensors.iter().any(|sensor| sensor.beacon == point) {
+    //         continue
+    //     } else if sensors.iter().any(|sensor| {
+    //         let radius = sensor.position.manhattan_distance(sensor.beacon);
+    //         sensor.position.manhattan_distance(point) <= radius
+    //     }) {
+    //         unreachable_beacons += 1
+    //     }
+    // }
+
+    // println!("total beacons: {}", unreachable_beacons)
 }
 
 fn parse_sensors(file_contents: String) -> Vec<structs::Sensor> {

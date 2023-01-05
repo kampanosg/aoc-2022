@@ -1,5 +1,5 @@
-use std::{ops::RangeInclusive, collections::HashSet};
 use itertools::Itertools;
+use std::ops::RangeInclusive;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub struct Coord {
@@ -27,11 +27,45 @@ impl Sensor {
     }
 }
 
-impl Coord {
-    // As shown in https://en.wikipedia.org/wiki/Taxicab_geometry
-    pub fn manhattan_distance(self, other: Self) -> i64 {
-        (self.x.abs_diff(other.x) + self.y.abs_diff(other.y)) as i64
-    }
+impl Coord {}
+
+pub struct Helpers {
+    pub sensors: Vec<Sensor>,
 }
 
+impl Helpers {
+    pub fn build_sensor_ranges(&self, y: i64) -> impl Iterator<Item = RangeInclusive<i64>> {
+        let mut sensor_ranges = vec![];
+        for sensor in &self.sensors {
+            let radius = Helpers::manhattan_distance(sensor.position, sensor.beacon);
+            let distance_y = (y - sensor.position.y).abs();
+            if distance_y > radius {
+                continue;
+            }
+            let actual_distance = radius - distance_y;
+            let middle = sensor.position.x;
+            let start = middle - actual_distance;
+            let end = middle + actual_distance;
+            let range = start..=end;
+            sensor_ranges.push(range);
+        }
+        sensor_ranges.sort_by_key(|r| *r.start());
 
+        sensor_ranges.into_iter().coalesce(|range1, range2| {
+            if range2.start() - 1 <= *range1.end() {
+                if range2.end() > range1.end() {
+                    Ok(*range1.start()..=*range2.end())
+                } else {
+                    Ok(range1)
+                }
+            } else {
+                Err((range1, range2))
+            }
+        })
+    }
+
+    // As shown in https://en.wikipedia.org/wiki/Taxicab_geometry
+    pub fn manhattan_distance(coord1: Coord, coord2: Coord) -> i64 {
+        (coord1.x.abs_diff(coord2.x) + coord1.y.abs_diff(coord2.y)) as i64
+    }
+}
