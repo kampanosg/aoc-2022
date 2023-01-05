@@ -1,5 +1,5 @@
 pub mod structs;
-use std::{env, fs};
+use std::{env, fs, vec::IntoIter};
 
 fn main() {
     let file_path = env::args().nth(1).expect("param not provided: file_path");
@@ -15,26 +15,26 @@ fn main() {
 }
 
 fn p1(sensors: Vec<structs::Sensor>) {
-    let mut total = 0;
-    let min_x = -4;
-    let max_x = 26;
-    let y = 10;
+    let mut unreachable_beacons = 0;
+    let y_location_to_inspect = 2_000_000;
+
+    let min_x = i64::MIN;
+    let max_x = i64::MAX;
 
     for x in min_x..=max_x {
-        let point = structs::Coord { x, y };
+        let point = structs::Coord { x, y: y_location_to_inspect };
 
-        if sensors.iter().any(|rec| rec.beacon == point) {
-            // already have a beacon there, not an impossible position
-        } else if sensors.iter().any(|rec| {
-            let radius = rec.position.manhattan_distance(rec.beacon);
-            rec.position.manhattan_distance(point) <= radius
+        if sensors.iter().any(|sensor| sensor.beacon == point) {
+            continue
+        } else if sensors.iter().any(|sensor| {
+            let radius = sensor.position.manhattan_distance(sensor.beacon);
+            sensor.position.manhattan_distance(point) <= radius
         }) {
-            // covered!
-            total += 1
+            unreachable_beacons += 1
         }
     }
 
-    println!("total beacons: {}", total)
+    println!("total beacons: {}", unreachable_beacons)
 }
 
 fn parse_sensors(file_contents: String) -> Vec<structs::Sensor> {
@@ -58,7 +58,6 @@ fn parse_sensors(file_contents: String) -> Vec<structs::Sensor> {
             .unwrap();
         let beacon_y = line[9].replace("y=", "").parse::<i64>().unwrap();
 
-        println!("{}, {}, {}, {}", sensor_x, sensor_y, beacon_x, beacon_y);
         sensors.push(structs::Sensor::new(sensor_x, sensor_y, beacon_x, beacon_y));
     }
 
