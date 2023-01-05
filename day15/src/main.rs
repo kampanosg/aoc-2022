@@ -39,10 +39,10 @@ fn p1(sensors: Vec<structs::Sensor>) {
 
 fn p2(sensors: Vec<structs::Sensor>) {
     let helpers = structs::Helpers { sensors };
-    let range = 0..=20;
-    let bp = helpers.beacon_position(&range, &range).unwrap();
-    dbg!(bp);
-    println!("tuning frequency: {}", bp.x * 4_000_000 + bp.y);
+    let range = 0..=4_000_000;
+    let beacon_position = helpers.find_beacon_position(&range, &range).unwrap();
+    let f = beacon_position.x * 4_000_000 + beacon_position.y;
+    println!("frequency = {}", f);
 }
 
 fn parse_sensors(file_contents: String) -> Vec<structs::Sensor> {

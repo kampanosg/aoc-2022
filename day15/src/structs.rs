@@ -64,34 +64,23 @@ impl Helpers {
         })
     }
 
-    pub fn ranges_clamped(
-        &self,
-        y: i64,
-        x_range: RangeInclusive<i64>,
-    ) -> impl Iterator<Item = RangeInclusive<i64>> {
-        self.build_sensor_ranges(y).filter_map(move |r| {
-            // make sure `r` fits into `x_range`
-            let r = *r.start().max(x_range.start())..=*r.end().min(x_range.end());
-            if r.start() > r.end() {
-                // it didn't fit at all!
+    fn marge_sensor_ranges(&self, y: i64, range_x: RangeInclusive<i64>) -> impl Iterator<Item = RangeInclusive<i64>> {
+        self.build_sensor_ranges(y).filter_map(move |sensor_range| {
+            let range = *sensor_range.start().max(range_x.start())..=*sensor_range.end().min(range_x.end());
+            if range.start() > range.end() {
                 None
             } else {
-                // we successfully clamped it / it was contained within `x_range` already
-                Some(r)
+                Some(range)
             }
         })
     }
 
-    pub fn beacon_position(
-        &self,
-        y_range: &RangeInclusive<i64>,
-        x_range: &RangeInclusive<i64>,
-    ) -> Option<Coord> {
-        y_range.clone().find_map(|y| {
-            self.ranges_clamped(y, x_range.clone())
+    pub fn find_beacon_position(&self, range_y: &RangeInclusive<i64>, x_range: &RangeInclusive<i64>) -> Option<Coord> {
+        range_y.clone().find_map(|y| {
+            self.marge_sensor_ranges(y, x_range.clone())
                 .nth(1)
-                .map(|r| Coord {
-                    x: r.start() - 1,
+                .map(|range| Coord {
+                    x: range.start() - 1,
                     y,
                 })
         })
