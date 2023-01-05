@@ -64,6 +64,39 @@ impl Helpers {
         })
     }
 
+    pub fn ranges_clamped(
+        &self,
+        y: i64,
+        x_range: RangeInclusive<i64>,
+    ) -> impl Iterator<Item = RangeInclusive<i64>> {
+        self.build_sensor_ranges(y).filter_map(move |r| {
+            // make sure `r` fits into `x_range`
+            let r = *r.start().max(x_range.start())..=*r.end().min(x_range.end());
+            if r.start() > r.end() {
+                // it didn't fit at all!
+                None
+            } else {
+                // we successfully clamped it / it was contained within `x_range` already
+                Some(r)
+            }
+        })
+    }
+
+    pub fn beacon_position(
+        &self,
+        y_range: &RangeInclusive<i64>,
+        x_range: &RangeInclusive<i64>,
+    ) -> Option<Coord> {
+        y_range.clone().find_map(|y| {
+            self.ranges_clamped(y, x_range.clone())
+                .nth(1)
+                .map(|r| Coord {
+                    x: r.start() - 1,
+                    y,
+                })
+        })
+    }
+
     // As shown in https://en.wikipedia.org/wiki/Taxicab_geometry
     pub fn manhattan_distance(coord1: Coord, coord2: Coord) -> i64 {
         (coord1.x.abs_diff(coord2.x) + coord1.y.abs_diff(coord2.y)) as i64

@@ -10,6 +10,7 @@ fn main() {
 
     match part.as_str() {
         "p1" => p1(sensors),
+        "p2" => p2(sensors),
         _ => println!(""),
     }
 }
@@ -34,27 +35,14 @@ fn p1(sensors: Vec<structs::Sensor>) {
         .sum::<usize>();
 
     println!("unreachable beacons: {}", unreachable_beacons);
+}
 
-    // let mut unreachable_beacons = 0;
-    // let y_location_to_inspect = 2_000_000;
-
-    // let min_x = i64::MIN;
-    // let max_x = i64::MAX;
-
-    // for x in min_x..=max_x {
-    //     let point = structs::Coord { x, y: y_location_to_inspect };
-
-    //     if sensors.iter().any(|sensor| sensor.beacon == point) {
-    //         continue
-    //     } else if sensors.iter().any(|sensor| {
-    //         let radius = sensor.position.manhattan_distance(sensor.beacon);
-    //         sensor.position.manhattan_distance(point) <= radius
-    //     }) {
-    //         unreachable_beacons += 1
-    //     }
-    // }
-
-    // println!("total beacons: {}", unreachable_beacons)
+fn p2(sensors: Vec<structs::Sensor>) {
+    let helpers = structs::Helpers { sensors };
+    let range = 0..=20;
+    let bp = helpers.beacon_position(&range, &range).unwrap();
+    dbg!(bp);
+    println!("tuning frequency: {}", bp.x * 4_000_000 + bp.y);
 }
 
 fn parse_sensors(file_contents: String) -> Vec<structs::Sensor> {
