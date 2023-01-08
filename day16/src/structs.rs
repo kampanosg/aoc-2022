@@ -32,3 +32,33 @@ impl fmt::Debug for ValveId {
         write!(f, "{}{}", c1, c2)
     }
 }
+
+#[derive(PartialEq, Eq, PartialOrd, Ord, Hash)]
+struct State {
+    pressure: u32,
+    opened: u64,
+    pos: [u16; 2],
+    time: [u32; 2],
+}
+
+impl State {
+    fn upper_bound(&self, best_valves: &[Vec<(usize, u32, u32)>]) -> u32 {
+        let [mut max_t, mut min_t] = self.time;
+        let mut opened = self.opened;
+        let mut bound = self.pressure;
+        'next_valve: loop {
+            for (i, min_dist, f) in &best_valves[max_t as usize] {
+                if opened & (1 << i) == 0 {
+                    max_t -= min_dist;
+                    bound += f * max_t as u32;
+                    if max_t < min_t {
+                        (min_t, max_t) = (max_t, min_t);
+                    }
+                    opened |= 1 << i;
+                    continue 'next_valve;
+                }
+            }
+            return bound;
+        }
+    }
+}
