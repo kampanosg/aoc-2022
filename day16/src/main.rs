@@ -19,19 +19,20 @@ fn main() {
     let valves = parse_valves(file_contents.as_str());
     let valve_distances = min_distances(&valves);
 
+    let open_valves: HashSet<_> = valves
+        .iter()
+        .filter(|(_, valve)| valve.flow_rate> 0)
+        .map(|(&name, _)| name)
+        .collect();
+
     match part.as_str() {
-        "p1" => p1(&valves, &valve_distances),
+        "p1" => p1(&valves, &valve_distances, &open_valves),
+        "p2" => p2(&valves, &valve_distances, &open_valves),
         _ => println!(""),
     }
 }
 
-fn p1(map: &HashMap<&str, Valve>, dist_map: &HashMap<(&str, &str), u32>) { 
-    let open_valves: HashSet<_> = map
-        .iter()
-        .filter(|(_, valve)| valve.flow_rate > 0)
-        .map(|(&name, _)| name)
-        .collect();
-
+fn p1(valves: &HashMap<&str, Valve>, valve_distances: &HashMap<(&str, &str), u32>, open_valves: &HashSet<&str>) { 
     let mut total_relieved_valves = 0;
     let mut moves = VecDeque::new();
     let mut visited_valves = HashSet::new();
@@ -48,7 +49,7 @@ fn p1(map: &HashMap<&str, Valve>, dist_map: &HashMap<(&str, &str), u32>) {
     while let Some(structs::State {opened, curr, elapsed, relieved}) = moves.pop_front()
     {
         if opened.len() == open_valves.len() || elapsed >= 30 {
-            let relieved_at_end = wait_for_boom(30, elapsed, relieved, &opened, &map);
+            let relieved_at_end = wait_for_boom(30, elapsed, relieved, &opened, &valves);
             total_relieved_valves = total_relieved_valves.max(relieved_at_end);
             continue;
         }
@@ -56,16 +57,16 @@ fn p1(map: &HashMap<&str, Valve>, dist_map: &HashMap<(&str, &str), u32>) {
         let closed_valves = open_valves.iter().filter(|name| !opened.contains(*name));
 
         for next_valve in closed_valves {
-            let cost = dist_map[&(curr, *next_valve)] + 1;
+            let cost = valve_distances[&(curr, *next_valve)] + 1;
             let new_elapsed = elapsed + cost;
 
             if new_elapsed >= 30 {
-                let relieved_at_end = wait_for_boom(30, elapsed, relieved, &opened, &map);
+                let relieved_at_end = wait_for_boom(30, elapsed, relieved, &opened, &valves);
                 total_relieved_valves = total_relieved_valves.max(relieved_at_end);
                 continue;
             }
 
-            let relieved_per_min: u32 = opened.iter().map(|name| &map[name].flow_rate).sum();
+            let relieved_per_min: u32 = opened.iter().map(|name| &valves[name].flow_rate).sum();
             let new_relieved = relieved + (relieved_per_min * cost);
 
             let mut new_opened = opened.clone();
@@ -82,7 +83,65 @@ fn p1(map: &HashMap<&str, Valve>, dist_map: &HashMap<(&str, &str), u32>) {
         }
     }
 
-    dbg!(total_relieved_valves);
+    println!("total: {}", total_relieved_valves);
+}
+
+pub fn p2(valves: &HashMap<&str, Valve>, valve_distances: &HashMap<(&str, &str), u32>, open_valves: &HashSet<&str>) { 
+    let mut total_opened_valves: HashMap<BTreeSet<&str>, u32> = HashMap::new();
+
+    let mut moves = VecDeque::new();
+    moves.push_back(structs::State {
+        curr: "AA",
+        opened: BTreeSet::new(),
+        elapsed: 0,
+        relieved: 0,
+    });
+
+    while let Some(structs::State {opened, curr, elapsed, relieved, }) = moves.pop_front() {
+        let relieved_at_end = wait_for_boom(26, elapsed, relieved, &opened, &valves);
+
+        total_opened_valves
+            .entry(opened.clone())
+            .and_modify(|val| *val = relieved_at_end.max(*val))
+            .or_insert(relieved_at_end);
+
+        if opened.len() == open_valves.len() || elapsed >= 26 {
+            continue;
+        }
+
+        let closed_valves = open_valves.iter().filter(|name| !opened.contains(*name));
+
+        for next_valve in closed_valves {
+            let cost = valve_distances[&(curr, *next_valve)] + 1;
+            let new_elapsed = elapsed + cost;
+            if new_elapsed >= 26 {
+                continue;
+            }
+
+            let relieved_per_min: u32 = opened.iter().map(|name| &valves[name].flow_rate).sum();
+            let new_relieved = relieved + (relieved_per_min * cost);
+
+            let mut new_opened = opened.clone();
+            new_opened.insert(next_valve);
+
+            moves.push_back(structs::State {
+                opened: new_opened,
+                curr: next_valve,
+                elapsed: new_elapsed,
+                relieved: new_relieved,
+            });
+        }
+    }
+
+    let total_opened_valves = total_opened_valves
+        .iter()
+        .tuple_combinations()
+        .filter(|(human, elephant)| human.0.is_disjoint(elephant.0))
+        .map(|(human, elephant)| human.1 + elephant.1)
+        .max()
+        .unwrap();
+
+    println!("total: {}", total_opened_valves);
 }
 
 // Return min cost to go from one valve to the orher, using Dijkstra's algorithm
