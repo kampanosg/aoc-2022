@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 #[derive(Debug)]
 pub enum Wind {
     Left,
@@ -11,10 +13,12 @@ pub struct Coord {
 
 pub struct CaveState {
     pub wind_count: u32,
-    pub rock_count: u32,
+    pub rock_count: u64,
     pub ceiling: u32,
     pub cave: Vec<[bool; 7]>,
     pub current_rock: Coord,
+    pub rock_patterns: HashMap<(usize, usize), (usize, usize, usize)>,
+    pub pattern_occurence_count: usize,
 }
 
 impl CaveState {
