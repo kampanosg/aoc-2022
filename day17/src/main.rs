@@ -42,7 +42,6 @@ const ROCKS: [&[structs::Coord]; 5] = [
     ],
 ];
 
-
 fn main() {
     let file_path = env::args().nth(1).expect("param not provided: file_path");
     let part = env::args().nth(2).expect("param not provided: path");
@@ -67,7 +66,7 @@ fn parse_wind(file_contents: String) -> Vec<structs::Wind> {
         .map(|c| match c {
             '>' => structs::Wind::Right,
             '<' => structs::Wind::Left,
-            _ => panic!("not valid wind input")
+            _ => panic!("not valid wind input"),
         })
         .collect::<Vec<structs::Wind>>()
 }
