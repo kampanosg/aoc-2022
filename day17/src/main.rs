@@ -3,14 +3,14 @@ use std::{env, fs};
 
 const CAVE_WIDTH: usize = 7;
 const ROCKS: [&[structs::Coord]; 5] = [
-    // horizontal line
+    // -
     &[
         structs::Coord { x: 0, y: 0 },
         structs::Coord { x: 1, y: 0 },
         structs::Coord { x: 2, y: 0 },
         structs::Coord { x: 3, y: 0 },
     ],
-    // plus
+    // +
     &[
         structs::Coord { x: 0, y: 1 },
         structs::Coord { x: 1, y: 0 },
@@ -18,7 +18,7 @@ const ROCKS: [&[structs::Coord]; 5] = [
         structs::Coord { x: 1, y: 2 },
         structs::Coord { x: 2, y: 1 },
     ],
-    // J (or backwards L)
+    // reversed L
     &[
         structs::Coord { x: 0, y: 0 },
         structs::Coord { x: 1, y: 0 },
@@ -26,14 +26,14 @@ const ROCKS: [&[structs::Coord]; 5] = [
         structs::Coord { x: 2, y: 1 },
         structs::Coord { x: 2, y: 2 },
     ],
-    // vertical line
+    // |
     &[
         structs::Coord { x: 0, y: 0 },
         structs::Coord { x: 0, y: 1 },
         structs::Coord { x: 0, y: 2 },
         structs::Coord { x: 0, y: 3 },
     ],
-    // square
+    // cube
     &[
         structs::Coord { x: 0, y: 0 },
         structs::Coord { x: 1, y: 0 },
