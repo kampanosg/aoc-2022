@@ -18,7 +18,7 @@ pub struct CaveState {
 }
 
 impl CaveState {
-    fn has_not_collided(&mut self, new_current_rock: &Coord, rock: &[Coord]) -> bool {
+    pub fn has_not_collided(&mut self, new_current_rock: &Coord, rock: &[Coord]) -> bool {
         rock.iter().all(|offset| {
             let x = new_current_rock.x + offset.x;
             let y = new_current_rock.y + offset.y;
