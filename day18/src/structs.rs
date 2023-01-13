@@ -40,3 +40,21 @@ impl Coord3D {
             && self.z <= max.z + 1
     }
 }
+
+mod tests {
+    use super::Coord3D;
+
+    #[test]
+    fn test_is_within_bounds() {
+        let coord = Coord3D { x: 0, y: 0, z: 0 };
+        assert!(
+            coord.is_within_bounds(&[Coord3D { x: 1, y: 0, z: 0 }, Coord3D { x: 0, y: 1, z: 0 }])
+        );
+        assert!(
+            coord.is_within_bounds(&[Coord3D { x: 0, y: 1, z: 0 }, Coord3D { x: 1, y: 0, z: 0 }])
+        );
+        assert!(
+            coord.is_within_bounds(&[Coord3D { x: 0, y: 0, z: 0 }, Coord3D { x: 0, y: 0, z: 0 }])
+        );
+    }
+}
