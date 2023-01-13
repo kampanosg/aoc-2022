@@ -29,4 +29,14 @@ impl Coord3D {
 
         adjacent
     }
+
+    pub fn is_within_bounds(&self, bounds: &[Self; 2]) -> bool {
+        let [min, max] = bounds;
+        self.x >= min.x - 1
+            && self.x <= max.x + 1
+            && self.y >= min.y - 1
+            && self.y <= max.y + 1
+            && self.z >= min.z - 1
+            && self.z <= max.z + 1
+    }
 }
