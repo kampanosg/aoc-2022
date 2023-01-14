@@ -111,5 +111,17 @@ jobs:
         cd ./day16
         cargo build --verbose
         cargo test --verbose
+        cd .. 
+    - name: Day 17
+      run: |
+        cd ./day17
+        cargo build --verbose
+        cargo test --verbose
+        cd ..
+    - name: Day 18
+      run: |
+        cd ./day18
+        cargo build --verbose
+        cargo test --verbose
         cd ..
  
