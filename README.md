@@ -4,7 +4,7 @@
 The Advent of Code 2022 challenges, written in Rust.
 
 ## How to Use
-Each day's challenge is located in its own subdirectory (e.g. `day1/`, `day2/`, etc.). Within each directory, you will find a Rust source file (`main.rs`) that contains the solution to the challenge. Every challenge comes in two parts (e.g. `p1` and `p2`). The `main` function expects the user to pass the part they want to run as a command line argument.
+Each day's challenge is located in its own subdirectory (e.g. `day01/`, `day02/`, etc.). Within each directory, you will find a Rust source file (`main.rs`) that contains the solution to the challenge. Every challenge comes in two parts (e.g. `p1` and `p2`). The `main` function expects the user to pass the part they want to run as a command line argument.
 
 To run a particular day's solution, navigate to the corresponding directory and run the following command:
 
