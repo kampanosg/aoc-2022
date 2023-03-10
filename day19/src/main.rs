@@ -11,6 +11,7 @@ fn main() {
 
     match part.as_str() {
         "p1" => p1(blueprints),
+        "p2" => p2(blueprints),
         _ => println!(""),
     }
 }
@@ -23,7 +24,17 @@ fn p1(blueprints: Vec<[[u16; 4]; 4]>) {
         .enumerate()
         .map(|(idx, geodes)| (idx + 1) * geodes as usize)
         .sum::<usize>();
-    println!("{}", res);
+    println!("result = {}", res);
+}
+
+fn p2(blueprints: Vec<[[u16; 4]; 4]>) {
+    let max_time = 32;
+    let res = blueprints
+        .iter()
+        .take(3)
+        .map(|blueprint| usize::from(max_geodes(blueprint, max_time)))
+        .product::<usize>();
+    println!("result = {}", res);
 }
 
 fn parse_blueprints(file_contents: String) -> Vec<[[u16; 4]; 4]> {
@@ -62,7 +73,11 @@ fn parse_blueprints(file_contents: String) -> Vec<[[u16; 4]; 4]> {
 fn max_geodes(blueprint: &[[u16; 4]; 4], max_time: u16) -> u16 {
     let mut max_robots = [u16::MAX; 4];
     for i in 0..3 {
-        max_robots[i] = blueprint.iter().map(|cost| cost[i]).max().unwrap();
+        max_robots[i] = blueprint
+            .iter()
+            .map(|cost| cost[i])
+            .max()
+            .unwrap();
     }
 
     let mut max_geodes = 0;
@@ -109,6 +124,7 @@ fn max_geodes(blueprint: &[[u16; 4]; 4], max_time: u16) -> u16 {
             let mut new_bots = bots;
             new_bots[i] += 1;
 
+           
             q.push_back(structs::State {
                 inventory: new_inventory,
                 bots: new_bots,
