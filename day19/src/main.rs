@@ -125,11 +125,7 @@ fn max_geodes(blueprint: &[[u16; 4]; 4], max_time: u16) -> u16 {
             new_bots[i] += 1;
 
             let remaining_time = max_time - new_elapsed;
-            if ((remaining_time - 1) * remaining_time) / 2
-                + new_inventory[3]
-                + remaining_time * new_bots[3]
-                < max_geodes
-            {
+            if ((remaining_time - 1) * remaining_time) / 2 + new_inventory[3] + remaining_time * new_bots[3] < max_geodes {
                 continue;
             }
 
