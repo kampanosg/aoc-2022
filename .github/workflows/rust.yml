@@ -18,55 +18,55 @@ jobs:
     - uses: actions/checkout@v3
     - name: Day 1
       run: |
-        cd ./day1
+        cd ./day01
         cargo build --verbose
         cargo test --verbose
         cd ..
     - name: Day 2
       run: |
-        cd ./day2
+        cd ./day02
         cargo build --verbose
         cargo test --verbose
         cd ..
     - name: Day 3
       run: |
-        cd ./day3
+        cd ./day03
         cargo build --verbose
         cargo test --verbose
         cd ..
     - name: Day 4
       run: |
-        cd ./day4
+        cd ./day04
         cargo build --verbose
         cargo test --verbose
         cd ..
     - name: Day 5
       run: |
-        cd ./day5
+        cd ./day05
         cargo build --verbose
         cargo test --verbose
         cd ..
     - name: Day 6
       run: |
-        cd ./day6
+        cd ./day06
         cargo build --verbose
         cargo test --verbose
         cd ..
     # - name: Day 7 TAKING TOO LONG AND THERE ARE NO TESTS
     #   run: |
-    #     cd ./day7
+    #     cd ./day07
     #     cargo build --verbose
     #     cargo test --verbose
     #     cd ../
     - name: Day 8
       run: |
-        cd ./day8
+        cd ./day08
         cargo build --verbose
         cargo test --verbose
         cd ..
     - name: Day 9
       run: |
-        cd ./day9
+        cd ./day09
         cargo build --verbose
         cargo test --verbose
         cd ..
