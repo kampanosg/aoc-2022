@@ -16,13 +16,13 @@ fn main() {
 }
 
 fn p1(blueprints: Vec<[[u16; 4]; 4]>) {
+    let max_time = 24;
     let res = blueprints
         .iter()
-        .map(|blueprint| max_geodes(blueprint))
+        .map(|blueprint| max_geodes(blueprint, max_time))
         .enumerate()
         .map(|(idx, geodes)| (idx + 1) * geodes as usize)
         .sum::<usize>();
-
     println!("{}", res);
 }
 
@@ -59,8 +59,12 @@ fn parse_blueprints(file_contents: String) -> Vec<[[u16; 4]; 4]> {
     blueprints
 }
 
-fn max_geodes(blueprint: &[[u16; 4]; 4]) -> u16 {
-    let max_time = 24;
+fn max_geodes(blueprint: &[[u16; 4]; 4], max_time: u16) -> u16 {
+    let mut max_robots = [u16::MAX; 4];
+    for i in 0..3 {
+        max_robots[i] = blueprint.iter().map(|cost| cost[i]).max().unwrap();
+    }
+
     let mut max_geodes = 0;
 
     let mut q = VecDeque::new();
@@ -77,6 +81,9 @@ fn max_geodes(blueprint: &[[u16; 4]; 4]) -> u16 {
     }) = q.pop_front()
     {
         for i in 0..blueprint.len() {
+            if bots[i] == max_robots[i] {
+                continue;
+            }
             let costs = &blueprint[i];
             let wait_time = (0..3)
                 .map(|idx| {
