@@ -1,5 +1,3 @@
-pub mod structs;
-use std::collections::VecDeque;
 use std::{env, fs};
 
 fn main() {
@@ -16,7 +14,28 @@ fn main() {
 }
 
 fn p1(numbers: Vec<i64>) {
-    
+    let mut decrypted_signal: Vec<_> = (0..numbers.len()).collect();
+    for (index, &num) in numbers.iter().enumerate() {
+        let decrypted_signal_index = find_index(decrypted_signal.clone(), index);
+        decrypted_signal.remove(decrypted_signal_index);
+        let new_mixed_idx = get_new_index(decrypted_signal_index, num, decrypted_signal.len());
+        decrypted_signal.insert(new_mixed_idx, index);
+    }
+
+    let zero_index = numbers.iter().position(|&num| num == 0).unwrap();
+    let zero_decrypted_signal_index =
+        get_decrytped_signal_zero_index(decrypted_signal.clone(), zero_index);
+
+    let res = [1000, 2000, 3000]
+        .iter()
+        .map(|offset| {
+            let mixed_idx = (zero_decrypted_signal_index + offset) % decrypted_signal.len();
+            let nums_idx = decrypted_signal[mixed_idx];
+            numbers[nums_idx]
+        })
+        .sum::<i64>();
+
+    println!("res = {}", res);
 }
 
 fn parse_numbers(file_contents: String) -> Vec<i64> {
@@ -24,4 +43,22 @@ fn parse_numbers(file_contents: String) -> Vec<i64> {
         .split_whitespace()
         .map(|s| s.parse().unwrap())
         .collect()
+}
+
+fn find_index(mixed: Vec<usize>, index: usize) -> usize {
+    mixed.iter().position(|&mix_num| mix_num == index).unwrap()
+}
+
+fn get_new_index(mixed_idx: usize, num: i64, signal_len: usize) -> usize {
+    (mixed_idx as i64 + num).rem_euclid(signal_len as i64) as usize
+}
+
+fn get_decrytped_signal_zero_index(
+    decrypted_signal: Vec<usize>,
+    signal_zero_index: usize,
+) -> usize {
+    decrypted_signal
+        .iter()
+        .position(|&mix_num| mix_num == signal_zero_index)
+        .unwrap()
 }
