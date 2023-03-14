@@ -9,6 +9,7 @@ fn main() {
 
     match part.as_str() {
         "p1" => p1(numbers),
+        "p2" => p2(numbers),
         _ => println!(""),
     }
 }
@@ -32,6 +33,36 @@ fn p1(numbers: Vec<i64>) {
             let mixed_idx = (zero_decrypted_signal_index + offset) % decrypted_signal.len();
             let nums_idx = decrypted_signal[mixed_idx];
             numbers[nums_idx]
+        })
+        .sum::<i64>();
+
+    println!("res = {}", res);
+}
+
+pub fn p2(numbers: Vec<i64>) {
+    let decryption_key = 811589153;
+    let original_signal: Vec<_> = numbers.iter().map(|num| num * decryption_key).collect();
+    let mut decrypted_signal: Vec<_> = (0..original_signal.len()).collect();
+
+    for _ in 0..10 {
+        for (idx, &num) in original_signal.iter().enumerate() {
+            let decrypted_signal_index = get_decrytped_signal_zero_index(decrypted_signal.clone(), idx);
+            decrypted_signal.remove(decrypted_signal_index);
+            let new_decrypted_signal_index =
+                (decrypted_signal_index as i64 + num).rem_euclid(decrypted_signal.len() as i64) as usize;
+            decrypted_signal.insert(new_decrypted_signal_index, idx);
+        }
+    }
+
+    let zero_index = original_signal.iter().position(|&num| num == 0).unwrap();
+    let zero_decrypted_signal_index = get_decrytped_signal_zero_index(decrypted_signal.clone(), zero_index);
+
+    let res = [1000, 2000, 3000]
+        .iter()
+        .map(|offset| {
+            let mixed_idx = (zero_decrypted_signal_index + offset) % decrypted_signal.len();
+            let nums_idx = decrypted_signal[mixed_idx];
+            original_signal[nums_idx]
         })
         .sum::<i64>();
 
