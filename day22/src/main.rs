@@ -21,7 +21,7 @@ fn p1(input: (Vec<Vec<structs::Block>>, Vec<structs::Move>)) {
         .position(|tile| *tile == structs::Block::Available)
         .unwrap() as i32;
 
-    let mut pos = structs::Coordinate {
+    let mut current_pos = structs::Coordinate {
         row: 0,
         col: start_col,
     };
@@ -33,27 +33,27 @@ fn p1(input: (Vec<Vec<structs::Block>>, Vec<structs::Move>)) {
             structs::Move::Up(amount) => {
                 for _ in 0..*amount {
                     let structs::Coordinate { row: dr, col: dc } = dir.offset();
-                    let new_tile = map
-                        .get((pos.row + dr) as usize)
-                        .and_then(|row| row.get((pos.col + dc) as usize))
+                    let next_tile = map
+                        .get((current_pos.row + dr) as usize)
+                        .and_then(|row| row.get((current_pos.col + dc) as usize))
                         .unwrap_or(&structs::Block::Empty);
 
-                    match new_tile {
-                        structs::Block::Wall => break,
+                    match next_tile {
                         structs::Block::Available => {
-                            pos = structs::Coordinate {
-                                row: pos.row + dr,
-                                col: pos.col + dc,
+                            current_pos = structs::Coordinate {
+                                row: current_pos.row + dr,
+                                col: current_pos.col + dc,
                             };
                         }
+                        structs::Block::Wall => break,
                         structs::Block::Empty => {
-                            let new_pos = wrap(&map, &pos, &dir);
+                            let new_pos = wrap(&map, &current_pos, &dir);
                             if map[new_pos.row as usize][new_pos.col as usize]
                                 == structs::Block::Wall
                             {
                                 break;
                             }
-                            pos = new_pos;
+                            current_pos = new_pos;
                         }
                     }
                 }
@@ -61,7 +61,7 @@ fn p1(input: (Vec<Vec<structs::Block>>, Vec<structs::Move>)) {
         }
     }
 
-    let res = 1000 * (pos.row + 1) + 4 * (pos.col + 1) + dir.score() as i32;
+    let res = 1000 * (current_pos.row + 1) + 4 * (current_pos.col + 1) + dir.score() as i32;
     println!("res: {}", res)
 }
 
@@ -100,7 +100,6 @@ fn parse_moves(input: &str) -> (Vec<Vec<structs::Block>>, Vec<structs::Move>) {
             digits.clear();
             instructions.push(structs::Move::Up(num));
 
-            // parse turn
             let turn = match c {
                 'L' => structs::Turn::L,
                 'R' => structs::Turn::R,

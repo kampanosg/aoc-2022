@@ -42,24 +42,24 @@ impl Direction {
     pub fn turn(self, turn: &Turn) -> Direction {
         use Direction::*;
         match (self, turn) {
-            (L, Turn::L) => D,
-            (L, Turn::R) => U,
-            (R, Turn::L) => U,
-            (R, Turn::R) => D,
             (U, Turn::L) => L,
             (U, Turn::R) => R,
+            (R, Turn::L) => U,
+            (R, Turn::R) => D,
             (D, Turn::L) => R,
             (D, Turn::R) => L,
+            (L, Turn::L) => D,
+            (L, Turn::R) => U,
         }
     }
 
     pub fn offset(&self) -> Coordinate {
         use Direction::*;
         match &self {
-            L => Coordinate { row: 0, col: -1 },
-            R => Coordinate { row: 0, col: 1 },
             U => Coordinate { row: -1, col: 0 },
+            R => Coordinate { row: 0, col: 1 },
             D => Coordinate { row: 1, col: 0 },
+            L => Coordinate { row: 0, col: -1 },
         }
     }
 }
