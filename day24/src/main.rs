@@ -13,6 +13,7 @@ fn main() {
 
     match part.as_str() {
         "p1" => p1(map),
+        "p2" => p2(map),
         _ => println!(""),
     }
 }
@@ -67,6 +68,38 @@ fn p1(mrc: (HashMap<structs::Coordinate, structs::Block>, usize, usize)) {
             }
         }
     }
+}
+
+
+pub fn p2(mrc: (HashMap<structs::Coordinate, structs::Block>, usize, usize)) {
+    let (map, rows, cols) = mrc;
+
+    let walls: HashSet<structs::Coordinate> = map
+        .iter()
+        .filter(|(_, tile)| **tile == structs::Block::Wall)
+        .map(|(pos, _)| *pos)
+        .collect();
+
+    let least_common_multiplier = calc_least_common_multiple(rows - 2, cols - 2);
+    let wind_patterns = build_wind_patterns(&map, rows, cols, least_common_multiplier);
+    let start_pos = structs::Coordinate { y: 0, x: 1 };
+    let end_pos = structs::Coordinate {
+        y: rows - 1,
+        x: cols - 2,
+    };
+
+    let blizzard = structs::BlizzardMap {
+        rows,
+        cols,
+        repeated_pos: least_common_multiplier,
+        walls,
+        wind_patterns,
+    };
+
+    let a = shortest(start_pos, end_pos, 0, &blizzard);
+    let b = shortest(end_pos, start_pos, a, &blizzard);
+    let res = shortest(start_pos, end_pos, b, &blizzard);
+    println!("res={}", res);
 }
 
 fn build_wind_patterns(
@@ -139,6 +172,51 @@ fn cacl_greatest_common_divisor(first: usize, second: usize) -> usize {
         max = min;
         min = res;
     }
+}
+
+
+fn shortest(from: structs::Coordinate, to: structs::Coordinate, start_time: usize, map_info: &structs::BlizzardMap) -> usize {
+    let structs::BlizzardMap {
+        rows,
+        cols,
+        walls,
+        wind_patterns: blizzard_maps,
+        repeated_pos: repeats_at,
+    } = map_info;
+    let mut q = BinaryHeap::new();
+    let mut seen_nodes = HashSet::new();
+
+    q.push(structs::Node {
+        cost: start_time,
+        pos: from,
+    });
+    seen_nodes.insert((from, start_time));
+
+    while let Some(structs::Node { cost, pos }) = q.pop() {
+        if pos == to {
+            return cost;
+        }
+
+        let new_cost = cost + 1;
+        let blizzards = &blizzard_maps[&(new_cost % repeats_at)];
+
+        let candidates = pos
+            .adjacent_coords(*rows, *cols)
+            .into_iter()
+            .chain(iter::once(pos))
+            .filter(|coord| !walls.contains(coord))
+            .filter(|coord| !blizzards.contains(coord));
+
+        for new_pos in candidates {
+            if seen_nodes.insert((new_pos, new_cost)) {
+                q.push(structs::Node {
+                    cost: new_cost,
+                    pos: new_pos,
+                });
+            }
+        }
+    }
+    usize::MAX
 }
 
 fn parse_map(input: &str) -> (HashMap<structs::Coordinate, structs::Block>, usize, usize) {

@@ -1,4 +1,4 @@
-use std::cmp::Ordering;
+use std::{cmp::Ordering, collections::{HashMap, HashSet}};
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub struct Coordinate {
@@ -78,4 +78,13 @@ impl Coordinate {
             },
         }
     }
+}
+
+
+pub struct BlizzardMap {
+    pub rows: usize,
+    pub cols: usize,
+    pub walls: HashSet<Coordinate>,
+    pub wind_patterns: HashMap<usize, HashSet<Coordinate>>,
+    pub repeated_pos: usize,
 }
