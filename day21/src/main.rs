@@ -9,6 +9,7 @@ fn main() {
 
     match part.as_str() {
         "p1" => p1(monkes),
+        "p2" => p2(monkes),
         _ => println!(""),
     }
 }
@@ -18,12 +19,29 @@ fn p1(monkes: HashMap<&str, Monke>) {
     println!("res: {}", res);
 }
 
+fn p2(monkes: HashMap<&str, Monke>) {
+    let Monke::Mathematical(_, lhs, rhs) = &monkes["root"] else {
+        panic!("root has to be a calculated monke");
+    };
+
+    let (name, value) = if should_depend_on_hooman(lhs, &monkes) {
+        let rhs_num = traverse_the_monke_tree(rhs, &monkes);
+        (lhs, rhs_num)
+    } else {
+        let lhs_num = traverse_the_monke_tree(lhs, &monkes);
+        (rhs, lhs_num)
+    };
+
+    let res = hooman_calc(name, value, &monkes);
+    println!("res: {}", res)
+}
+
 fn parse_monkes(input: &str) -> HashMap<&str, Monke> {
     input
         .lines()
         .map(|line| {
             let (name, right) = line.split_once(": ").unwrap();
-            let monkey = match right.parse() {
+            let monke = match right.parse() {
                 Ok(n) => Monke::Yelling(n),
                 Err(_) => {
                     let mut iter = right.split_ascii_whitespace();
@@ -40,7 +58,7 @@ fn parse_monkes(input: &str) -> HashMap<&str, Monke> {
                 }
             };
 
-            (name, monkey)
+            (name, monke)
         })
         .collect()
 }
@@ -57,6 +75,50 @@ fn traverse_the_monke_tree(name: &str, monkes: &HashMap<&str, Monke>) -> i64 {
                 MathOperation::Multiplication => lhs_num * rhs_num,
                 MathOperation::Division => lhs_num / rhs_num,
             }
+        }
+    }
+}
+
+fn should_depend_on_hooman(name: &str, monkes: &HashMap<&str, Monke>) -> bool {
+    if name == "humn" {
+        return true;
+    }
+    match &monkes[name] {
+        Monke::Yelling(_) => false,
+        Monke::Mathematical(_, lhs, rhs) => {
+            should_depend_on_hooman(lhs, monkes) || should_depend_on_hooman(rhs, monkes)
+        }
+    }
+}
+
+fn hooman_calc(name: &str, value: i64, monkes: &HashMap<&str, Monke>) -> i64 {
+    if name == "humn" {
+        return value;
+    }
+
+    match &monkes[name] {
+        Monke::Yelling(n) => *n,
+        Monke::Mathematical(operator, lhs, rhs) => {
+            let (new_name, new_value) = if should_depend_on_hooman(lhs, monkes) {
+                let rhs_num = traverse_the_monke_tree(rhs, monkes);
+                let new_value = match operator {
+                    MathOperation::Addition => value - rhs_num,
+                    MathOperation::Substitution => value + rhs_num,
+                    MathOperation::Multiplication => value / rhs_num,
+                    MathOperation::Division => value * rhs_num,
+                };
+                (lhs, new_value)
+            } else {
+                let lhs_num = traverse_the_monke_tree(lhs, monkes);
+                let new_value = match operator {
+                    MathOperation::Addition => value - lhs_num,
+                    MathOperation::Substitution => lhs_num - value,
+                    MathOperation::Multiplication => value / lhs_num,
+                    MathOperation::Division => lhs_num / value,
+                };
+                (rhs, new_value)
+            };
+            hooman_calc(new_name, new_value, monkes)
         }
     }
 }
