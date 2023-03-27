@@ -2,7 +2,6 @@ pub mod structs;
 use std::{env, fs};
 
 fn main() {
-    println!("Hello, world!");
     let file_path = env::args().nth(1).expect("param not provided: file_path");
     let part = env::args().nth(2).expect("param not provided: path");
     let file_contents = fs::read_to_string(file_path).unwrap();
@@ -15,8 +14,77 @@ fn main() {
     }
 }
 
-fn p1(moves: (Vec<Vec<structs::Block>>, Vec<structs::Move>)) {
-    println!("p1");
+fn p1(input: (Vec<Vec<structs::Block>>, Vec<structs::Move>)) {
+    let (map, instructions) = input;
+    let start_col = map[0]
+        .iter()
+        .position(|tile| *tile == structs::Block::Available)
+        .unwrap() as i32;
+
+    let mut pos = structs::Coordinate {
+        row: 0,
+        col: start_col,
+    };
+    let mut dir = structs::Direction::R;
+
+    for inst in &instructions {
+        match inst {
+            structs::Move::Rotate(turn) => dir = dir.turn(turn),
+            structs::Move::Up(amount) => {
+                for _ in 0..*amount {
+                    let structs::Coordinate { row: dr, col: dc } = dir.offset();
+                    let new_tile = map
+                        .get((pos.row + dr) as usize)
+                        .and_then(|row| row.get((pos.col + dc) as usize))
+                        .unwrap_or(&structs::Block::Empty);
+
+                    match new_tile {
+                        structs::Block::Wall => break,
+                        structs::Block::Available => {
+                            pos = structs::Coordinate {
+                                row: pos.row + dr,
+                                col: pos.col + dc,
+                            };
+                        }
+                        structs::Block::Empty => {
+                            let new_pos = wrap(&map, &pos, &dir);
+                            if map[new_pos.row as usize][new_pos.col as usize]
+                                == structs::Block::Wall
+                            {
+                                break;
+                            }
+                            pos = new_pos;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    let res = 1000 * (pos.row + 1) + 4 * (pos.col + 1) + dir.score() as i32;
+    println!("res: {}", res)
+}
+
+fn wrap(
+    map: &[Vec<structs::Block>],
+    pos: &structs::Coordinate,
+    dir: &structs::Direction,
+) -> structs::Coordinate {
+    let structs::Coordinate { row: dr, col: dc } = dir.offset();
+    let mut curr = pos.clone();
+    while let Some(tile) = map
+        .get((curr.row - dr) as usize)
+        .and_then(|row| row.get((curr.col - dc) as usize))
+    {
+        if *tile == structs::Block::Empty {
+            break;
+        }
+        curr = structs::Coordinate {
+            row: curr.row - dr,
+            col: curr.col - dc,
+        };
+    }
+    curr
 }
 
 fn parse_moves(input: &str) -> (Vec<Vec<structs::Block>>, Vec<structs::Move>) {
