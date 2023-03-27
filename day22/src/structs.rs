@@ -22,44 +22,44 @@ pub struct Coordinate {
 }
 
 pub enum Direction {
-    L,
-    R,
-    U,
-    D,
+    Up,
+    Right,
+    Down,
+    Left,
 }
 
 impl Direction {
     pub fn score(&self) -> usize {
         use Direction::*;
         match self {
-            R => 0,
-            D => 1,
-            L => 2,
-            U => 3,
+            Up => 3,
+            Right => 0,
+            Down => 1,
+            Left => 2,
         }
     }
 
     pub fn turn(self, turn: &Turn) -> Direction {
         use Direction::*;
         match (self, turn) {
-            (U, Turn::L) => L,
-            (U, Turn::R) => R,
-            (R, Turn::L) => U,
-            (R, Turn::R) => D,
-            (D, Turn::L) => R,
-            (D, Turn::R) => L,
-            (L, Turn::L) => D,
-            (L, Turn::R) => U,
+            (Up, Turn::L) => Left,
+            (Up, Turn::R) => Right,
+            (Right, Turn::L) => Up,
+            (Right, Turn::R) => Down,
+            (Down, Turn::L) => Right,
+            (Down, Turn::R) => Left,
+            (Left, Turn::L) => Down,
+            (Left, Turn::R) => Up,
         }
     }
 
     pub fn offset(&self) -> Coordinate {
         use Direction::*;
         match &self {
-            U => Coordinate { row: -1, col: 0 },
-            R => Coordinate { row: 0, col: 1 },
-            D => Coordinate { row: 1, col: 0 },
-            L => Coordinate { row: 0, col: -1 },
+            Up => Coordinate { row: -1, col: 0 },
+            Right => Coordinate { row: 0, col: 1 },
+            Down => Coordinate { row: 1, col: 0 },
+            Left => Coordinate { row: 0, col: -1 },
         }
     }
 }

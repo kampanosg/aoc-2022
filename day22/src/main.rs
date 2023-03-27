@@ -26,7 +26,7 @@ fn p1(input: (Vec<Vec<structs::Block>>, Vec<structs::Move>)) {
         row: 0,
         col: start_col,
     };
-    let mut dir = structs::Direction::R;
+    let mut dir = structs::Direction::Right;
 
     for inst in &instructions {
         match inst {
@@ -99,7 +99,7 @@ pub fn p2(input: (Vec<Vec<structs::Block>>, Vec<structs::Move>)) {
         row: 0,
         col: start_col,
     };
-    let mut dir = structs::Direction::R;
+    let mut dir = structs::Direction::Right;
 
     for inst in &instructions {
         match inst {
@@ -145,42 +145,42 @@ fn turn_around(
     dir: &structs::Direction,
 ) -> (structs::Coordinate, structs::Direction) {
     let (cube_row, cube_col, new_dir) = match (pos.row / 50, pos.col / 50, dir) {
-        (0, 1, structs::Direction::U) => (3, 0, structs::Direction::R),
-        (0, 1, structs::Direction::L) => (2, 0, structs::Direction::R),
-        (0, 2, structs::Direction::U) => (3, 0, structs::Direction::U),
-        (0, 2, structs::Direction::R) => (2, 1, structs::Direction::L),
-        (0, 2, structs::Direction::D) => (1, 1, structs::Direction::L),
-        (1, 1, structs::Direction::R) => (0, 2, structs::Direction::U),
-        (1, 1, structs::Direction::L) => (2, 0, structs::Direction::D),
-        (2, 0, structs::Direction::U) => (1, 1, structs::Direction::R),
-        (2, 0, structs::Direction::L) => (0, 1, structs::Direction::R),
-        (2, 1, structs::Direction::R) => (0, 2, structs::Direction::L),
-        (2, 1, structs::Direction::D) => (3, 0, structs::Direction::L),
-        (3, 0, structs::Direction::R) => (2, 1, structs::Direction::U),
-        (3, 0, structs::Direction::D) => (0, 2, structs::Direction::D),
-        (3, 0, structs::Direction::L) => (0, 1, structs::Direction::D),
+        (0, 1, structs::Direction::Up) => (3, 0, structs::Direction::Right),
+        (0, 1, structs::Direction::Left) => (2, 0, structs::Direction::Right),
+        (0, 2, structs::Direction::Up) => (3, 0, structs::Direction::Up),
+        (0, 2, structs::Direction::Right) => (2, 1, structs::Direction::Left),
+        (0, 2, structs::Direction::Down) => (1, 1, structs::Direction::Left),
+        (1, 1, structs::Direction::Right) => (0, 2, structs::Direction::Up),
+        (1, 1, structs::Direction::Left) => (2, 0, structs::Direction::Down),
+        (2, 0, structs::Direction::Up) => (1, 1, structs::Direction::Right),
+        (2, 0, structs::Direction::Left) => (0, 1, structs::Direction::Right),
+        (2, 1, structs::Direction::Right) => (0, 2, structs::Direction::Left),
+        (2, 1, structs::Direction::Down) => (3, 0, structs::Direction::Left),
+        (3, 0, structs::Direction::Right) => (2, 1, structs::Direction::Up),
+        (3, 0, structs::Direction::Down) => (0, 2, structs::Direction::Down),
+        (3, 0, structs::Direction::Left) => (0, 1, structs::Direction::Down),
         _ => panic!(),
     };
     let (row_idx, col_idx) = (pos.row % 50, pos.col % 50);
 
     let i = match dir {
-        structs::Direction::L => 49 - row_idx,
-        structs::Direction::R => row_idx,
-        structs::Direction::U => col_idx,
-        structs::Direction::D => 49 - col_idx,
+        structs::Direction::Left => 49 - row_idx,
+        structs::Direction::Right => row_idx,
+        structs::Direction::Up => col_idx,
+        structs::Direction::Down => 49 - col_idx,
     };
 
     let new_row = match new_dir {
-        structs::Direction::L => 49 - i,
-        structs::Direction::R => i,
-        structs::Direction::U => 49,
-        structs::Direction::D => 0,
+        structs::Direction::Left => 49 - i,
+        structs::Direction::Right => i,
+        structs::Direction::Up => 49,
+        structs::Direction::Down => 0,
     };
     let new_col = match new_dir {
-        structs::Direction::L => 49,
-        structs::Direction::R => 0,
-        structs::Direction::U => i,
-        structs::Direction::D => 49 - i,
+        structs::Direction::Left => 49,
+        structs::Direction::Right => 0,
+        structs::Direction::Up => i,
+        structs::Direction::Down => 49 - i,
     };
 
     let new_pos = structs::Coordinate {
