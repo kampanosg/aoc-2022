@@ -159,7 +159,7 @@ fn turn_around(
         (3, 0, structs::Direction::R) => (2, 1, structs::Direction::U),
         (3, 0, structs::Direction::D) => (0, 2, structs::Direction::D),
         (3, 0, structs::Direction::L) => (0, 1, structs::Direction::D),
-        _ => unreachable!(),
+        _ => panic!(),
     };
     let (row_idx, col_idx) = (pos.row % 50, pos.col % 50);
 
@@ -170,7 +170,6 @@ fn turn_around(
         structs::Direction::D => 49 - col_idx,
     };
 
-    // find new idxes within the cube
     let new_row = match new_dir {
         structs::Direction::L => 49 - i,
         structs::Direction::R => i,
