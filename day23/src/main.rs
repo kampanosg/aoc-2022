@@ -1,5 +1,6 @@
 pub mod structs;
-use std::{collections::HashSet, env, fs};
+use std::{collections::{HashSet, HashMap}, env, fs};
+use itertools::Itertools;
 
 fn main() {
     let file_path = env::args().nth(1).expect("param not provided: file_path");
@@ -14,8 +15,68 @@ fn main() {
     }
 }
 
-fn p1(elves: HashSet<structs::Coordinate>) {
+fn p1(e: HashSet<structs::Coordinate>) {
+    let mut elves = e.clone();
+    let mut checks = [
+        structs::Compass::North,
+        structs::Compass::South,
+        structs::Compass::West,
+        structs::Compass::East,
+    ];
 
+    for round in 1.. {
+        let mut proposals: HashMap<structs::Coordinate, Vec<structs::Coordinate>> = HashMap::new();
+
+        for elf in &elves {
+            let neighbours = elf.adjacent_coord();
+            if neighbours.iter().all(|coord| !elves.contains(coord)) {
+                continue;
+            }
+            let neighbours = neighbours
+                .iter()
+                .map(|neighbour| elves.contains(neighbour))
+                .collect::<Vec<_>>()
+                .try_into()
+                .unwrap();
+
+            let proposed_dir = checks.iter().find(|dir| dir.check(&neighbours));
+            if let Some(dir) = proposed_dir {
+                let proposal = elf.add_coord(dir);
+                proposals.entry(proposal).or_default().push(*elf);
+            }
+        }
+
+        for (new_coord, old_coords) in proposals {
+            if old_coords.len() == 1 {
+                elves.remove(&old_coords[0]);
+                elves.insert(new_coord);
+            }
+        }
+
+        checks.rotate_left(1);
+        if round == 10 {
+                let (minmax_y, minmax_x) = elves.iter().fold(
+                    ((i32::MAX, i32::MIN), (i32::MAX, i32::MIN)),
+                    |(minmax_row, minmax_col), structs::Coordinate { y, x}| {
+                        (
+                            (minmax_row.0.min(*y), minmax_row.1.max(*y)),
+                            (minmax_col.0.min(*x), minmax_col.1.max(*x)),
+                        )
+                    },
+                );
+                let res = (minmax_y.0..=minmax_y.1)
+                    .cartesian_product(minmax_x.0..=minmax_x.1)
+                    .filter(|(row, col)| {
+                        !elves.contains(&structs::Coordinate {
+                            y: *row,
+                            x: *col,
+                        })
+                    })
+                    .count()
+                    .to_string();
+                println!("res: {}", res);
+            }
+    }
 }
 
 fn parse_elves(input: &str) -> HashSet<structs::Coordinate> {
