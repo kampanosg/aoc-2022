@@ -29,7 +29,7 @@ These solutions were written for fun and education as I wanted to get better at 
 ## License
 This code is released under the MIT License. See `LICENSE.txt` for more information.
 
-## Mandatory GIF
+## Full Image
 <p align="center">
-<img src="https://media.giphy.com/media/3o6wrglt7FjpTnmyEE/giphy.gif" />
+<img src="https://user-images.githubusercontent.com/30287348/228312142-412612d1-ec5a-4171-9c2f-60038afd5044.png" />
 </p>
