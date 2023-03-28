@@ -1,6 +1,6 @@
-# Advent of Code: Day 17 🎄
+# Advent of Code: Day 24 🎄
 
-Day 17 of the Advent of Code 2022 challenge. The problem statement can be found [here](https://adventofcode.com/2022/day/17).
+Day 4 of the Advent of Code 2022 challenge. The problem statement can be found [here](https://adventofcode.com/2022/day/24).
 
 To run the program (select which part: p1 or p2)
 ```bash
